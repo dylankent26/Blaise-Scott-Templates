@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blaise & Scott BBCode Tool</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; background:#10131a; color:#fff; }
+.container { max-width:1250px; margin:auto; padding:20px; }
+.tabs { display:flex; gap:10px; margin-bottom:10px; }
+.tab { padding:8px 12px; background:#2a3140; border-radius:8px; cursor:pointer; }
+.tab.active { background:#4f7cff; }
+.card { background:#181d27; padding:15px; border-radius:10px; }
+.builderGrid { display:grid; grid-template-columns:260px 1fr; gap:15px; }
+.templateList button { display:block; width:100%; text-align:left; margin:0 0 8px 0; background:#2a3140; }
+.templateList button.selected { background:#4f7cff; }
+input, textarea, select { width:100%; box-sizing:border-box; background:#0e1118; color:#fff; border:1px solid #333; border-radius:6px; padding:8px; }
+textarea { min-height:170px; resize:vertical; }
+#output { min-height:360px; margin-top:10px; }
+button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px; background:#4f7cff; color:white; cursor:pointer; }
+.small { background:#3a4152; }
+.field { margin-bottom:10px; }
+.hidden { display:none; }
+.exhibitBox { border:1px solid #333; padding:10px; border-radius:8px; margin-bottom:10px; background:#111722; }
+@media (max-width:850px) { .builderGrid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('builder')">Builder</div>
+  <div class="tab" onclick="switchTab('settings')">Settings</div>
+  <div class="tab" onclick="switchTab('drafts')">Drafts</div>
+</div>
+
+<div id="builder" class="card">
+  <div class="builderGrid">
+    <div class="templateList">
+      <h3>Templates</h3>
+      <button id="btn_outreach" class="selected" onclick="setTemplate('outreach')">Client Outreach</button>
+      <button id="btn_notice" onclick="setTemplate('notice')">Notice of Counsel</button>
+      <button id="btn_suppress" onclick="setTemplate('suppress')">Motion to Suppress</button>
+      <button id="btn_compel" onclick="setTemplate('compel')">Motion to Compel Discovery</button>
+    </div>
+
+    <div>
+      <div id="commonWhoTo" class="field">
+        <label>Who To</label>
+        <input id="whoTo">
+      </div>
+
+      <div id="outreachFields">
+        <label>Message</label>
+        <textarea id="outreachMessage"></textarea>
+      </div>
+
+      <div id="noticeFields" class="hidden">
+        <div class="field"><label>Date, DD/APR/YYYY</label><input id="noticeDate" placeholder="01/APR/2026"></div>
+        <div class="field"><label>Defendant Name</label><input id="noticeDefendant"></div>
+        <div class="field"><label>Counsel Role</label><select id="noticeRole"><option>Primary Counsel</option><option>Co-Counsel</option></select></div>
+      </div>
+
+      <div id="suppressFields" class="hidden">
+        <div class="field"><label>Case Number</label><input id="suppressCase" placeholder="00-CM-0000"></div>
+        <div class="field"><label>Date, DD/APR/YYYY</label><input id="suppressDate" placeholder="01/APR/2026"></div>
+        <div class="field"><label>Defendant Name</label><input id="suppressDefendant"></div>
+        <h3>Exhibits</h3>
+        <div id="exhibits"></div>
+        <button class="small" onclick="addExhibit()">Add Exhibit</button>
+      </div>
+
+      <div id="compelFields" class="hidden">
+        <div class="field"><label>Case Number</label><input id="compelCase" placeholder="00-CM-0000"></div>
+        <div class="field"><label>Date, DD/APR/YYYY</label><input id="compelDate" placeholder="01/APR/2026"></div>
+        <div class="field"><label>Defendant Name</label><input id="compelDefendant"></div>
+        <label>Detailed Reasoning</label>
+        <textarea id="compelReasoning"></textarea>
+      </div>
+
+      <div>
+        <button onclick="insertPhrase('Please be advised that ')">Insert Formal Start</button>
+        <button onclick="insertPhrase('Respectfully submitted.')">Insert Closing</button>
+      </div>
+
+      <button onclick="saveDraft()" class="small">Save Draft</button>
+      <button onclick="copyOutput()">Copy BBCode</button>
+
+      <textarea id="output" readonly></textarea>
+    </div>
+  </div>
+</div>
+
+<div id="settings" class="card" style="display:none;">
+  <label>Name</label><input id="set_name" placeholder="Levy Gold">
+  <label>Title</label><input id="set_title" placeholder="Interim Executive Partner">
+  <label>Phone</label><input id="set_phone" placeholder="590-2182">
+  <label>Logo Image URL</label><input id="set_logo" placeholder="https://i.ibb.co/N2sHcmBP/logologolgo.png">
+  <label>Signature Image URL</label><input id="set_sig" placeholder="https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png">
+  <button onclick="saveSettings()">Save Settings</button>
+</div>
+
+<div id="drafts" class="card" style="display:none;">
+  <div id="draftList"></div>
+</div>
+
+</div>
+
+<script>
+let currentTemplate = 'outreach';
+let exhibitCount = 0;
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (tab === 'builder') document.querySelectorAll('.tab')[0].classList.add('active');
+  if (tab === 'settings') document.querySelectorAll('.tab')[1].classList.add('active');
+  if (tab === 'drafts') document.querySelectorAll('.tab')[2].classList.add('active');
+  document.getElementById('builder').style.display = tab === 'builder' ? 'block' : 'none';
+  document.getElementById('settings').style.display = tab === 'settings' ? 'block' : 'none';
+  document.getElementById('drafts').style.display = tab === 'drafts' ? 'block' : 'none';
+}
+
+function setTemplate(name) {
+  currentTemplate = name;
+  document.querySelectorAll('.templateList button').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn_' + name).classList.add('selected');
+
+  ['outreachFields','noticeFields','suppressFields','compelFields'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById(name + 'Fields').classList.remove('hidden');
+
+  document.getElementById('commonWhoTo').style.display = name === 'outreach' ? 'block' : 'none';
+  generate();
+}
+
+function getSettings() {
+  return {
+    name: localStorage.getItem('name') || 'Levy Gold',
+    title: localStorage.getItem('title') || 'Interim Executive Partner',
+    phone: localStorage.getItem('phone') || '590-2182',
+    logo: localStorage.getItem('logo') || 'https://i.ibb.co/N2sHcmBP/logologolgo.png',
+    sig: localStorage.getItem('sig') || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png'
+  };
+}
+
+function normaliseDate(value) {
+  return value.trim().replace(/\/([a-z]{3})\//i, function(match, month) {
+    return '/' + month.toUpperCase() + '/';
+  });
+}
+
+function baseTemplate(body) {
+  const s = getSettings();
+  return `[divbox=#0A1A2F][color=Transparent] - - - - - [/color][/divbox]
+[divbox=#0A1A2F][img]${s.logo}[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial]
+[size=80][color=#FFFFFF][i][/i][/color][/size][/font][/right][/aligntable]
+[float=right][right]
+
+[color=#b28537][font=Times New Roman][size=150][b]Blaise & Scott[/b][/size]
+[size=120]5. Del Perro Blvd[/size][/font]
+[font=Times New Roman][size=105][i]"YOUR CASE, OUR COMMITMENT"[/i][/size][/font][/right][/float][/color]
+[divbox=white]
+[list=none]${body}
+
+[hr][/hr]
+[list=none][/list]
+
+[fimg=155,55]${s.sig}[/fimg][font=Times New Roman]
+${s.name} - ${s.title}
+☏ ${s.phone}
+[b]Your Case. Our Commitment.[/b][/font]
+[/divbox][/divbox]
+[divbox=#0A1A2F][color=Transparent] - - - - - [/color][/divbox]`;
+}
+
+function buildOutreach() {
+  const whoTo = document.getElementById('whoTo').value.trim() || 'To whom it may concern';
+  const message = document.getElementById('outreachMessage').value.trim() || `My name is Levy Gold, Junior Attorney at Blaise & Scott, a law firm based in Del Perro.
+
+I have reviewed your case on the docket and would like to offer my services as your counsel. You would be represented by me through Blaise & Scott, with the firm overseeing and supporting your defence throughout the matter.
+
+Legal fees are required for representation. Full details regarding fees, billing structure, and any applicable retainer will be discussed transparently prior to engagement and confirmed before any substantive work begins.
+
+Please respond to this email at your earliest convenience so that we can arrange a meeting and determine how you wish to proceed.
+
+Thank you for your time and consideration.`;
+  return `[b]${whoTo},[/b]
+
+${message}`;
+}
+
+function buildNotice() {
+  const date = normaliseDate(document.getElementById('noticeDate').value);
+  const defendant = document.getElementById('noticeDefendant').value.trim() || '[Name]';
+  const role = document.getElementById('noticeRole').value;
+  return `A Notice of Counsel was filed in the above-referenced matter on ${date}.
+
+I, Levy Gold, a private defense attorney with Blaise & Scott, will be representing the defendant(s), ${defendant}, in this case.
+
+I will be acting as ${role} and will await further direction from the Presiding Judge.`;
+}
+
+function addExhibit(data = {}) {
+  exhibitCount++;
+  const div = document.createElement('div');
+  div.className = 'exhibitBox';
+  div.innerHTML = `
+    <strong>Exhibit ${exhibitCount}</strong>
+    <label>Exhibit Number</label><input class="exhibitNum" value="${data.num || exhibitCount}">
+    <label>Evidence Name</label><input class="exhibitName" value="${data.name || ''}">
+    <label>Source of Discovery</label><input class="exhibitSource" value="${data.source || ''}">
+    <label>Requested Evidence to Suppress</label><textarea class="exhibitSuppress">${data.suppress || ''}</textarea>
+    <label>Detailed Reasoning</label><textarea class="exhibitReason">${data.reason || ''}</textarea>
+    <button class="small" onclick="this.parentElement.remove(); generate();">Remove Exhibit</button>`;
+  document.getElementById('exhibits').appendChild(div);
+  div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', generate));
+  generate();
+}
+
+function buildSuppress() {
+  const caseNo = document.getElementById('suppressCase').value.trim() || '00-CM-0000';
+  const date = normaliseDate(document.getElementById('suppressDate').value);
+  const defendant = document.getElementById('suppressDefendant').value.trim() || 'Defendant';
+  let exhibitText = '';
+  document.querySelectorAll('.exhibitBox').forEach(box => {
+    const num = box.querySelector('.exhibitNum').value.trim();
+    const name = box.querySelector('.exhibitName').value.trim();
+    const source = box.querySelector('.exhibitSource').value.trim();
+    const suppress = box.querySelector('.exhibitSuppress').value.trim();
+    const reason = box.querySelector('.exhibitReason').value.trim();
+    exhibitText += `\n[list=none]
+Exhibit ${num}: [i]${name}, ${source}[/i]
+[b]Requested Evidence to Suppress:[/b][quote]
+${suppress}
+[/quote]
+[list=none][b]Detailed Reasoning:[/b] ${reason}
+[/list][/list]\n`;
+  });
+
+  return `[b]To whom it may concern,[/b]
+
+[hr][/hr]
+[center][b][size=125]MOTION TO SUPPRESS[/size][/b][/center]
+[hr][/hr]
+
+[center][font=Arial]IN THE SUPERIOR COURT OF SAN ANDREAS
+
+State of San Andreas v. ${defendant}
+#${caseNo}
+
+A Motion to Suppress was filed in the above case on ${date}.
+[/center]
+
+Defendant, ${defendant}, by and through counsel of record, submits this Motion to Suppress and respectfully moves this Court to suppress the following evidence.
+
+${exhibitText}`;
+}
+
+function buildCompel() {
+  const caseNo = document.getElementById('compelCase').value.trim() || '00-CM-0000';
+  const date = normaliseDate(document.getElementById('compelDate').value);
+  const defendant = document.getElementById('compelDefendant').value.trim() || 'Defendant';
+  const reasoning = document.getElementById('compelReasoning').value.trim();
+  return `[b]To whom it may concern,[/b]
+
+[hr][/hr]
+[center][b][size=125]MOTION TO COMPEL DISCOVERY[/size][/b][/center]
+[hr][/hr]
+
+[center][font=Arial]IN THE SUPERIOR COURT OF SAN ANDREAS
+
+State of San Andreas v. ${defendant}
+#${caseNo}
+
+A Motion to Compel Discovery was filed in the above case on ${date}.
+[/center]
+
+Defendant ${defendant}, by and through counsel of record, respectfully moves to compel discovery to expedite the case.
+
+[list=none][b]Detailed Reasoning:[/b] ${reasoning}
+[/list]`;
+}
+
+function generate() {
+  let body = '';
+  if (currentTemplate === 'outreach') body = buildOutreach();
+  if (currentTemplate === 'notice') body = buildNotice();
+  if (currentTemplate === 'suppress') body = buildSuppress();
+  if (currentTemplate === 'compel') body = buildCompel();
+  document.getElementById('output').value = baseTemplate(body);
+}
+
+function copyOutput(){
+  const out = document.getElementById('output');
+  out.select();
+  navigator.clipboard.writeText(out.value);
+}
+
+function saveSettings(){
+  localStorage.setItem('name', document.getElementById('set_name').value || 'Levy Gold');
+  localStorage.setItem('title', document.getElementById('set_title').value || 'Interim Executive Partner');
+  localStorage.setItem('phone', document.getElementById('set_phone').value || '590-2182');
+  localStorage.setItem('logo', document.getElementById('set_logo').value || 'https://i.ibb.co/N2sHcmBP/logologolgo.png');
+  localStorage.setItem('sig', document.getElementById('set_sig').value || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png');
+  generate();
+}
+
+function loadSettings(){
+  const s = getSettings();
+  document.getElementById('set_name').value = s.name;
+  document.getElementById('set_title').value = s.title;
+  document.getElementById('set_phone').value = s.phone;
+  document.getElementById('set_logo').value = s.logo;
+  document.getElementById('set_sig').value = s.sig;
+}
+
+function insertPhrase(text){
+  const map = {
+    outreach: 'outreachMessage',
+    compel: 'compelReasoning'
+  };
+  const target = document.getElementById(map[currentTemplate] || 'outreachMessage');
+  target.value += text;
+  generate();
+}
+
+function saveDraft(){
+  const drafts = JSON.parse(localStorage.getItem('drafts') || '[]');
+  drafts.push({ template: currentTemplate, output: document.getElementById('output').value, savedAt: new Date().toLocaleString() });
+  localStorage.setItem('drafts', JSON.stringify(drafts));
+  loadDrafts();
+}
+
+function loadDrafts(){
+  const drafts = JSON.parse(localStorage.getItem('drafts') || '[]');
+  const list = document.getElementById('draftList');
+  list.innerHTML = '';
+  drafts.forEach((d,i) => {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<button onclick="loadDraft(${i})">Load Draft ${i+1} - ${d.template} - ${d.savedAt}</button> <button class="small" onclick="deleteDraft(${i})">Delete</button>`;
+    list.appendChild(wrap);
+  });
+}
+
+function loadDraft(i){
+  const drafts = JSON.parse(localStorage.getItem('drafts') || '[]');
+  document.getElementById('output').value = drafts[i].output;
+  switchTab('builder');
+}
+
+function deleteDraft(i){
+  const drafts = JSON.parse(localStorage.getItem('drafts') || '[]');
+  drafts.splice(i,1);
+  localStorage.setItem('drafts', JSON.stringify(drafts));
+  loadDrafts();
+}
+
+const inputs = document.querySelectorAll('input, textarea, select');
+inputs.forEach(el => el.addEventListener('input', generate));
+inputs.forEach(el => el.addEventListener('change', generate));
+
+loadSettings();
+addExhibit();
+setTemplate('outreach');
+loadDrafts();
+generate();
+</script>
+</body>
+</html>
