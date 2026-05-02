@@ -547,6 +547,9 @@ button.small i {
   .builderGrid {
     grid-template-columns: 1fr;
   }
+  .personnelLayout {
+    grid-template-columns: 1fr;
+  }
   .pages,
   .tabs {
     flex-wrap: wrap;
@@ -586,6 +589,17 @@ select option {
 .recordItem { border: 1px solid #1f2a3a; border-radius: 12px; padding: 12px; background: #0a1016; }
 .recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:#e0e6ff; margin-bottom:6px; }
 .recordMeta { color:#a0a8c4; font-size: .9rem; white-space: pre-wrap; }
+.personnelLayout { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
+.personnelListPanel, .personnelDetailPanel { border: 1px solid #1f2a3a; border-radius: 12px; background: #0a1016; padding: 14px; }
+.personnelCard { border: 1px solid #1f2a3a; border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
+.personnelCard.active { border-color: #4f7cff; background: rgba(79,124,255,0.12); }
+.sectionTabs { display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.sectionTab { padding: 8px 12px; border: 1px solid #2a3a4a; border-radius: 10px; background: transparent; color:#a0a8c4; cursor:pointer; }
+.sectionTab.active { background: linear-gradient(135deg, #4f7cff, #6a8cff); color: white; border-color: #4f7cff; }
+.sectionToolbar { display:flex; justify-content: space-between; align-items:center; gap:10px; margin-bottom: 10px; }
+.modalBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index: 2000; }
+.modalCard { width: min(760px, 92vw); max-height: 88vh; overflow:auto; background:#0f1419; border:1px solid #2a3a4a; border-radius: 14px; padding: 18px; }
+.modalActions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 14px; }
 
 </style>
 </head>
@@ -688,14 +702,37 @@ select option {
 <div id="page_hr" class="pageCard" style="display:none;">
   <div class="fieldsContainer">
     <div class="sectionHeader"><i data-lucide="users"></i>HR</div>
-    <div class="recordGrid">
-      <div class="field"><label>Personnel Name</label><input id="hr_name" placeholder="Jane Doe"></div>
-      <div class="field"><label>Role</label><input id="hr_reviews" placeholder="Paralegal"></div>
-      <div class="field"><label>Phone</label><input id="hr_disciplinary" placeholder="555-0123"></div>
-      <div class="field"><label>Notes</label><textarea id="hr_training" placeholder="Personnel notes..."></textarea></div>
+    <div class="personnelLayout">
+      <div class="personnelListPanel">
+        <div class="sectionToolbar">
+          <strong>Personnel Files</strong>
+          <button class="small" onclick="openPersonnelModal()"><i data-lucide="plus"></i>New</button>
+        </div>
+        <div id="hr_list" class="recordList"></div>
+      </div>
+      <div class="personnelDetailPanel">
+        <div id="hr_detail_empty">Select a personnel file to manage sections.</div>
+        <div id="hr_detail" class="hidden">
+          <div class="sectionTabs" id="hr_section_tabs"></div>
+          <div class="sectionToolbar">
+            <strong id="hr_section_title"></strong>
+            <button class="small" onclick="openHrRecordModal()"><i data-lucide="plus"></i>Add Record</button>
+          </div>
+          <div id="hr_section_list" class="recordList"></div>
+        </div>
+      </div>
     </div>
-    <div class="buttonGroup"><button onclick="saveHrRecord()"><i data-lucide="save"></i>Save Personnel File</button></div>
-    <div id="hr_list" class="recordList"></div>
+  </div>
+</div>
+
+<div id="modal_backdrop" class="modalBackdrop hidden">
+  <div class="modalCard">
+    <h3 id="modal_title">Modal</h3>
+    <div id="modal_fields" class="recordGrid"></div>
+    <div class="modalActions">
+      <button class="small" onclick="closeModal()">Cancel</button>
+      <button onclick="submitModal()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -758,6 +795,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let hrPersonnel = [];
+let selectedPersonnelId = '';
+let activeHrSection = 'basicInfo';
+let hrSectionRows = [];
+let modalState = null;
 let currentTemplate = 'outreach';
 let exhibitCount = 0;
 
@@ -1146,6 +1187,15 @@ function deleteDraft(i){
   loadDrafts();
 }
 
+const hrSections = {
+  basicInfo: { label: 'Basic Info', fields: ['title', 'email', 'address', 'emergencyContact', 'notes'] },
+  strikes: { label: 'Strikes / Discipline', fields: ['strikeAmount', 'reason', 'issuedBy', 'date', 'notes', 'status'] },
+  caseHistory: { label: 'Case History', fields: ['caseNumber', 'roleOnCase', 'outcome', 'winLoss', 'dateClosed', 'notes'] },
+  ongoingCases: { label: 'Ongoing Cases', fields: ['caseNumber', 'client', 'charges', 'status', 'nextStep', 'assignedAttorney', 'notes'] },
+  performanceReviews: { label: 'Performance Reviews', fields: ['reviewDate', 'reviewer', 'rating', 'strengths', 'issues', 'improvementNotes'] },
+  trainingLogs: { label: 'Training Logs', fields: ['trainingName', 'trainer', 'date', 'passFail', 'notes'] }
+};
+
 function getRecords(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
 function setRecords(key, rows) { localStorage.setItem(key, JSON.stringify(rows)); }
 function renderRecordList(key, listId, formatter) {
@@ -1173,53 +1223,92 @@ function renderHrList() {
   list.innerHTML = '';
   hrPersonnel.forEach((row) => {
     const el = document.createElement('div');
-    el.className = 'recordItem';
-    el.innerHTML = `<div class="recordHeader"><span>${formatters.hr.title(row)}</span><div><button class="small" onclick="editHrRecord('${row.id}')">Edit</button> <button class="small" onclick="deleteHrRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${formatters.hr.body(row)}</div>`;
+    el.className = `personnelCard ${selectedPersonnelId === row.id ? 'active' : ''}`;
+    el.innerHTML = `<div class="recordHeader"><span>${formatters.hr.title(row)}</span><div><button class="small" onclick="openPersonnelModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${formatters.hr.body(row)}</div>`;
+    el.addEventListener('click', (event) => {
+      if (event.target.closest('button')) return;
+      selectPersonnel(row.id);
+    });
     list.appendChild(el);
   });
 }
-
-async function saveHrRecord() {
-  const name = hr_name.value.trim();
-  const role = hr_reviews.value.trim();
-  const phone = hr_disciplinary.value.trim();
-  const notes = hr_training.value.trim();
-  await addDoc(collection(db, 'personnel'), {
-    name,
-    role,
-    phone,
-    notes,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
+function selectPersonnel(id) { selectedPersonnelId = id; renderHrList(); renderHrSections(); subscribeHrSection(); }
+function getSectionCollectionRef() { return collection(db, 'personnel', selectedPersonnelId, activeHrSection); }
+function renderHrSections() {
+  const tabs = document.getElementById('hr_section_tabs');
+  const detail = document.getElementById('hr_detail');
+  const empty = document.getElementById('hr_detail_empty');
+  if (!selectedPersonnelId) { detail.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden'); detail.classList.remove('hidden');
+  tabs.innerHTML = '';
+  Object.entries(hrSections).forEach(([key, cfg]) => {
+    const btn = document.createElement('button');
+    btn.className = `sectionTab ${activeHrSection === key ? 'active' : ''}`;
+    btn.textContent = cfg.label;
+    btn.onclick = () => { activeHrSection = key; renderHrSections(); subscribeHrSection(); };
+    tabs.appendChild(btn);
   });
-  hr_name.value = '';
-  hr_reviews.value = '';
-  hr_disciplinary.value = '';
-  hr_training.value = '';
+  hr_section_title.textContent = hrSections[activeHrSection].label;
+}
+function renderHrSectionList() {
+  hr_section_list.innerHTML = '';
+  hrSectionRows.forEach((row) => {
+    const title = row.caseNumber || row.trainingName || row.reviewer || row.reason || row.title || row.date || 'Record';
+    const meta = Object.entries(row).filter(([k]) => !['id'].includes(k)).map(([k,v]) => `${k}: ${v || '-'}`).join('\n');
+    const el = document.createElement('div');
+    el.className = 'recordItem';
+    el.innerHTML = `<div class="recordHeader"><span>${title}</span><div><button class="small" onclick="openHrRecordModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrSectionRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${meta}</div>`;
+    hr_section_list.appendChild(el);
+  });
+}
+function subscribeHrSection() {
+  if (!selectedPersonnelId) return;
+  onSnapshot(getSectionCollectionRef(), (snapshot) => { hrSectionRows = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderHrSectionList(); });
 }
 
-async function editHrRecord(id) {
-  const current = hrPersonnel.find(p => p.id === id);
-  if (!current) return;
-  const name = prompt('Name', current.name || '');
-  if (name === null) return;
-  const role = prompt('Role', current.role || '');
-  if (role === null) return;
-  const phone = prompt('Phone', current.phone || '');
-  if (phone === null) return;
-  const notes = prompt('Notes', current.notes || '');
-  if (notes === null) return;
-  await updateDoc(doc(db, 'personnel', id), { name: name.trim(), role: role.trim(), phone: phone.trim(), notes: notes.trim(), updatedAt: serverTimestamp() });
-}
+async function deleteHrSectionRecord(id) { await deleteDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id)); }
 
 async function deleteHrRecord(id) {
   await deleteDoc(doc(db, 'personnel', id));
+}
+function openModal(title, fields, values, onSubmit) {
+  modalState = { fields, onSubmit };
+  modal_title.textContent = title;
+  modal_fields.innerHTML = fields.map((field) => `<div class="field"><label>${field.label}</label><input id="modal_${field.key}" value="${values?.[field.key] || ''}" placeholder="${field.label}"></div>`).join('');
+  modal_backdrop.classList.remove('hidden');
+}
+function closeModal() { modal_backdrop.classList.add('hidden'); modalState = null; }
+async function submitModal() {
+  if (!modalState) return;
+  const payload = {};
+  modalState.fields.forEach((field) => { payload[field.key] = (document.getElementById(`modal_${field.key}`)?.value || '').trim(); });
+  await modalState.onSubmit(payload);
+  closeModal();
+}
+function openPersonnelModal(id = '') {
+  const current = hrPersonnel.find(p => p.id === id) || {};
+  const fields = [{ key:'name', label:'Personnel Name' }, { key:'role', label:'Role' }, { key:'phone', label:'Phone' }, { key:'notes', label:'Notes' }];
+  openModal(id ? 'Edit Personnel File' : 'New Personnel File', fields, current, async (data) => {
+    if (id) await updateDoc(doc(db, 'personnel', id), { ...data, updatedAt: serverTimestamp() });
+    else await addDoc(collection(db, 'personnel'), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+  });
+}
+function openHrRecordModal(id = '') {
+  if (!selectedPersonnelId) return;
+  const current = hrSectionRows.find(r => r.id === id) || {};
+  const fields = hrSections[activeHrSection].fields.map(key => ({ key, label: key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()) }));
+  openModal(`${id ? 'Edit' : 'Add'} ${hrSections[activeHrSection].label} Record`, fields, current, async (data) => {
+    if (id) await updateDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id), { ...data, updatedAt: serverTimestamp() });
+    else await addDoc(collection(db, 'personnel', selectedPersonnelId, activeHrSection), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+  });
 }
 
 function subscribePersonnel() {
   onSnapshot(collection(db, 'personnel'), (snapshot) => {
     hrPersonnel = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!selectedPersonnelId && hrPersonnel.length) selectedPersonnelId = hrPersonnel[0].id;
     renderHrList();
+    renderHrSections();
   });
 }
 function saveClientRecord() {
@@ -1275,10 +1364,12 @@ renderRecordList('caseRecords', 'case_list', formatters.case);
 if (window.lucide) lucide.createIcons();
 generate();
 
-window.saveHrRecord = saveHrRecord;
-window.editHrRecord = editHrRecord;
 window.deleteHrRecord = deleteHrRecord;
 Object.assign(window, {
+  openPersonnelModal,
+  openHrRecordModal,
+  closeModal,
+  submitModal,
   switchPage,
   switchTab,
   setTemplate,
