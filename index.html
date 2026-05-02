@@ -1274,7 +1274,13 @@ async function deleteHrRecord(id) {
 function openModal(title, fields, values, onSubmit) {
   modalState = { fields, onSubmit };
   modal_title.textContent = title;
-  modal_fields.innerHTML = fields.map((field) => `<div class="field"><label>${field.label}</label><input id="modal_${field.key}" value="${values?.[field.key] || ''}" placeholder="${field.label}"></div>`).join('');
+  modal_fields.innerHTML = fields.map((field) => {
+    const value = values?.[field.key] || '';
+    if (field.type === 'textarea') {
+      return `<div class="field"><label>${field.label}</label><textarea id="modal_${field.key}" placeholder="${field.label}">${value}</textarea></div>`;
+    }
+    return `<div class="field"><label>${field.label}</label><input id="modal_${field.key}" value="${value}" placeholder="${field.label}"></div>`;
+  }).join('');
   modal_backdrop.classList.remove('hidden');
 }
 function closeModal() { modal_backdrop.classList.add('hidden'); modalState = null; }
@@ -1287,7 +1293,7 @@ async function submitModal() {
 }
 function openPersonnelModal(id = '') {
   const current = hrPersonnel.find(p => p.id === id) || {};
-  const fields = [{ key:'name', label:'Personnel Name' }, { key:'role', label:'Role' }, { key:'phone', label:'Phone' }, { key:'notes', label:'Notes' }];
+  const fields = [{ key:'name', label:'Name' }, { key:'role', label:'Role' }, { key:'phone', label:'Phone' }, { key:'notes', label:'Notes', type:'textarea' }];
   openModal(id ? 'Edit Personnel File' : 'New Personnel File', fields, current, async (data) => {
     if (id) await updateDoc(doc(db, 'personnel', id), { ...data, updatedAt: serverTimestamp() });
     else await addDoc(collection(db, 'personnel'), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
