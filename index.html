@@ -2174,7 +2174,8 @@ let activeDateInput = null;
 
 function openDatePicker(input) {
   activeDateInput = input;
-  const selected = input.value ? new Date(input.value) : new Date();
+  const pickerValue = input.dataset.isoValue || input.value;
+  const selected = pickerValue ? new Date(pickerValue) : new Date();
   datePickerState.viewDate = isNaN(selected.getTime()) ? new Date() : new Date(selected.getFullYear(), selected.getMonth(), 1);
   renderDatePicker();
   const rect = input.getBoundingClientRect();
@@ -2215,8 +2216,13 @@ function renderDatePicker() {
 
 function selectDate(day) {
   const date = new Date(datePickerState.viewDate.getFullYear(), datePickerState.viewDate.getMonth(), day);
-  activeDateInput.value = formatDateInputValue(date);
+  const isoValue = formatDateInputValue(date);
+  activeDateInput.dataset.isoValue = isoValue;
+  activeDateInput.value = activeDateInput.dataset.displayFormat === 'retainer'
+    ? formatRetainerDisplayDate(isoValue)
+    : isoValue;
   activeDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+  activeDateInput.dispatchEvent(new Event('change', { bubbles: true }));
   document.getElementById('datePicker').classList.add('hidden');
 }
 
@@ -2829,15 +2835,17 @@ function openPersonnelModal(id = '') {
 }
 function openClientModal(id = '') {
   const current = clientRows.find((client) => client.id === id) || {};
+  const initialStartDate = normalizeRetainerDateValue(current.retainerStartDate);
   modalState = {
     fields: [],
     onSubmit: async () => {
+      const retainerStartDate = normalizeRetainerDateValue(document.getElementById('modal_client_retainerStartDate').dataset.isoValue || '');
       const data = {
         name: (document.getElementById('modal_client_name').value || '').trim(),
         phone: (document.getElementById('modal_client_phone').value || '').trim(),
         address: (document.getElementById('modal_client_address').value || '').trim(),
-        retainerStartDate: (document.getElementById('modal_client_retainerStartDate').value || '').trim(),
-        retainerEndDate: calculateRetainerEndDate((document.getElementById('modal_client_retainerStartDate').value || '').trim()),
+        retainerStartDate,
+        retainerEndDate: calculateRetainerEndDate(retainerStartDate),
         notes: (document.getElementById('modal_client_notes').value || '').trim(),
         billingNotes: (document.getElementById('modal_client_billingNotes').value || '').trim(),
         updatedAt: serverTimestamp()
@@ -2856,8 +2864,8 @@ function openClientModal(id = '') {
       <div class="field"><label>Client Name</label><input id="modal_client_name" value="${escapeHtml(current.name || '')}" placeholder="Client Name"></div>
       <div class="field"><label>Phone Number</label><input id="modal_client_phone" value="${escapeHtml(current.phone || '')}" placeholder="555-0100"></div>
       <div class="field full"><label>Address</label><textarea id="modal_client_address" placeholder="e.g. 9 Didion Dr.">${escapeHtml(current.address || '')}</textarea></div>
-      <div class="field"><label>Retainer Start Date</label><input type="date" id="modal_client_retainerStartDate" value="${escapeHtml(current.retainerStartDate || '')}"></div>
-      <div class="field"><label>Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></label><input type="date" id="modal_client_retainerEndDate" value="" readonly></div>
+      <div class="field"><label>Retainer Start Date</label><input id="modal_client_retainerStartDate" class="date-input" readonly data-display-format="retainer" data-iso-value="${escapeHtml(initialStartDate)}" value="${escapeHtml(formatRetainerDisplayDate(initialStartDate))}" placeholder="Select date"></div>
+      <div class="field"><label>Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></label><input id="modal_client_retainerEndDate" readonly placeholder="Auto-calculated"></div>
       <div class="field"><label>Retainer Status Preview</label><div id="modal_retainer_preview" class="retainerPreview"></div></div>
       <div class="field full"><label>Notes</label><textarea id="modal_client_notes" placeholder="Client notes...">${escapeHtml(current.notes || '')}</textarea></div>
       <div class="field full"><label>Billing Notes</label><textarea id="modal_client_billingNotes" placeholder="Billing notes...">${escapeHtml(current.billingNotes || '')}</textarea></div>
@@ -2867,12 +2875,17 @@ function openClientModal(id = '') {
   const startDateInput = document.getElementById('modal_client_retainerStartDate');
   const endDateInput = document.getElementById('modal_client_retainerEndDate');
   const renderPreview = () => {
-    const endDate = calculateRetainerEndDate(startDateInput.value);
-    endDateInput.value = endDate;
+    const startDate = normalizeRetainerDateValue(startDateInput.dataset.isoValue || startDateInput.value);
+    startDateInput.dataset.isoValue = startDate;
+    startDateInput.value = formatRetainerDisplayDate(startDate);
+    const endDate = calculateRetainerEndDate(startDate);
+    endDateInput.value = formatRetainerDisplayDate(endDate);
     renderRetainerPreview(endDate);
   };
   startDateInput.addEventListener('input', renderPreview);
   startDateInput.addEventListener('change', renderPreview);
+  startDateInput.addEventListener('focus', () => openDatePicker(startDateInput));
+  startDateInput.addEventListener('click', () => openDatePicker(startDateInput));
   renderPreview();
   refreshLucideIcons();
 }
@@ -2892,15 +2905,62 @@ function getClientName(id) {
 function isClientArchived(client = {}) {
   return client.archived === true;
 }
+function getStoredClientTotalCases(client = {}) {
+  const value = Number(client.totalCases);
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+function getClientTotalCases(client = {}) {
+  if (!client.id) return getStoredClientTotalCases(client);
+  const linkedCaseCount = caseRows.filter((row) => row.clientId === client.id).length;
+  return linkedCaseCount || getStoredClientTotalCases(client);
+}
+function sortClientsByTotalCases(clients = []) {
+  return [...clients].sort((a, b) => {
+    const totalDiff = getClientTotalCases(b) - getClientTotalCases(a);
+    if (totalDiff !== 0) return totalDiff;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+}
 function getVisibleClients() {
-  return clientRows.filter((client) => showArchivedClients || !isClientArchived(client));
+  return sortClientsByTotalCases(clientRows.filter((client) => showArchivedClients || !isClientArchived(client)));
 }
 function getSelectedClient() {
   return clientRows.find((client) => client.id === selectedClientId) || {};
 }
+function normalizeRetainerDateValue(value = '') {
+  if (!value) return '';
+  if (typeof value === 'object') {
+    if (typeof value.toDate === 'function') return formatDateInputValue(value.toDate());
+    if (typeof value.seconds === 'number') return formatDateInputValue(new Date(value.seconds * 1000));
+  }
+  const raw = String(value).trim();
+  if (!raw) return '';
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  const displayMatch = raw.match(/^(\d{1,2})\/([A-Za-z]{3})\/(\d{4})$/);
+  if (displayMatch) {
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const monthIndex = months.indexOf(displayMatch[2].toUpperCase());
+    if (monthIndex >= 0) {
+      return `${displayMatch[3]}-${String(monthIndex + 1).padStart(2, '0')}-${String(Number(displayMatch[1])).padStart(2, '0')}`;
+    }
+  }
+  const parsed = new Date(raw);
+  if (!Number.isNaN(parsed.getTime())) return formatDateInputValue(parsed);
+  return '';
+}
+function formatRetainerDisplayDate(value = '') {
+  const isoValue = normalizeRetainerDateValue(value);
+  if (!isoValue) return '';
+  const [year, month, day] = isoValue.split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return `${String(day).padStart(2, '0')}/${months[month - 1]}/${year}`;
+}
 function calculateRetainerEndDate(retainerStartDate = '') {
-  if (!retainerStartDate) return '';
-  const [year, month, day] = retainerStartDate.split('-').map(Number);
+  const normalizedStartDate = normalizeRetainerDateValue(retainerStartDate);
+  if (!normalizedStartDate) return '';
+  const [year, month, day] = normalizedStartDate.split('-').map(Number);
   if (!year || !month || !day) return '';
   const targetMonth = month - 1 + 3;
   const targetYear = year + Math.floor(targetMonth / 12);
@@ -2915,12 +2975,14 @@ function calculateRetainerEndDate(retainerStartDate = '') {
   return `${yyyy}-${mm}-${dd}`;
 }
 function getClientRetainerEndDate(client = {}) {
-  if (!client.retainerStartDate) return '';
-  return client.retainerEndDate || calculateRetainerEndDate(client.retainerStartDate);
+  const retainerStartDate = normalizeRetainerDateValue(client.retainerStartDate);
+  if (!retainerStartDate) return '';
+  return normalizeRetainerDateValue(client.retainerEndDate) || calculateRetainerEndDate(retainerStartDate);
 }
 function getRetainerColor(retainerEndDate = '') {
-  if (!retainerEndDate) return '';
-  const date = new Date(`${retainerEndDate}T00:00:00`);
+  const normalizedEndDate = normalizeRetainerDateValue(retainerEndDate);
+  if (!normalizedEndDate) return '';
+  const date = new Date(`${normalizedEndDate}T00:00:00`);
   if (Number.isNaN(date.getTime())) return '';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -2939,7 +3001,7 @@ function getRetainerLabel(retainerEndDate = '') {
 function renderRetainerDot(client) {
   const retainerEndDate = getClientRetainerEndDate(client);
   const color = getRetainerColor(retainerEndDate);
-  return `<span class="retainerDot ${color}" title="Retainer end date: ${escapeHtml(retainerEndDate || 'Not set')}"></span>`;
+  return `<span class="retainerDot ${color}" title="Retainer end date: ${escapeHtml(formatRetainerDisplayDate(retainerEndDate) || 'Not set')}"></span>`;
 }
 function renderRetainerPreview(retainerEndDate = '') {
   const preview = document.getElementById('modal_retainer_preview');
@@ -3495,7 +3557,7 @@ function renderClientList() {
     return;
   }
   visibleClients.forEach((client) => {
-    const totalCases = caseRows.filter((row) => row.clientId === client.id).length;
+    const totalCases = getClientTotalCases(client);
     const el = document.createElement('div');
     el.className = `clientCard ${selectedClientId === client.id ? 'active' : ''}`;
     el.innerHTML = `
@@ -3523,7 +3585,7 @@ function renderClientDetail() {
     empty.classList.remove('hidden');
     return;
   }
-  const totalCases = caseRows.filter((row) => row.clientId === selectedClientId).length;
+  const totalCases = getClientTotalCases(client);
   empty.classList.add('hidden');
   detail.classList.remove('hidden');
   document.getElementById('client_profile').innerHTML = `
@@ -3545,8 +3607,8 @@ function renderClientDetail() {
       <div><span class="profileLabel">Phone Number</span><div class="profileValue">${escapeHtml(client.phone || '-')}</div></div>
       <div class="full"><span class="profileLabel">Address</span><div class="profileValue">${escapeHtml(client.address || '-')}</div></div>
       <div><span class="profileLabel">Retainer Status</span><div class="profileValue">${escapeHtml(getRetainerLabel(getClientRetainerEndDate(client)))}</div></div>
-      <div><span class="profileLabel">Retainer Start Date</span><div class="profileValue">${escapeHtml(client.retainerStartDate || '-')}</div></div>
-      <div><span class="profileLabel">Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></span><div class="profileValue">${escapeHtml(getClientRetainerEndDate(client) || '-')}</div></div>
+      <div><span class="profileLabel">Retainer Start Date</span><div class="profileValue">${escapeHtml(formatRetainerDisplayDate(client.retainerStartDate) || '-')}</div></div>
+      <div><span class="profileLabel">Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></span><div class="profileValue">${escapeHtml(formatRetainerDisplayDate(getClientRetainerEndDate(client)) || '-')}</div></div>
       <div class="full"><span class="profileLabel">Notes</span><div class="profileValue">${escapeHtml(client.notes || '-')}</div></div>
       <div class="full"><span class="profileLabel">Billing Notes</span><div class="profileValue">${escapeHtml(client.billingNotes || '-')}</div></div>
     </div>
@@ -3594,7 +3656,7 @@ function subscribeClientCases() {
 function subscribeClients() {
   if (clientsUnsubscribe) clientsUnsubscribe();
   clientsUnsubscribe = onSnapshot(collection(db, 'clients'), (snapshot) => {
-    clientRows = snapshot.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    clientRows = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     const visibleClients = getVisibleClients();
     if (!selectedClientId && visibleClients.length) selectedClientId = visibleClients[0].id;
     if (selectedClientId && !visibleClients.some((client) => client.id === selectedClientId)) selectedClientId = visibleClients[0]?.id || '';
