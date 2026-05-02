@@ -675,6 +675,27 @@ select option {
 .chargeSearch {
   margin-bottom: 8px;
 }
+.chargeModifiers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.chargeModifier {
+  border: 1px solid #2a3a4a;
+  background: #0f1419;
+  color: #a0a8c4;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chargeModifier.active {
+  background: rgba(79, 124, 255, 0.18);
+  border-color: rgba(79, 124, 255, 0.5);
+  color: #e0e6ff;
+}
 .chargeList {
   max-height: 280px;
   overflow: auto;
@@ -996,16 +1017,39 @@ function getChargeCategory(code = '') {
   const labels = { VC: 'VEHICLE CODE (VC)', GM: 'GENERAL MISDEMEANOR (GM)', WM: 'WEAPON (WM)' };
   return labels[prefix] || `${prefix} CHARGES (${prefix})`;
 }
+function chargeSelectionKey(charge) {
+  if (typeof charge === 'string') return charge;
+  if (!charge || typeof charge !== 'object') return '';
+  return `${charge.code || ''}::${(charge.modifiers || []).join('|')}`;
+}
+function formatChargeWithModifiers(chargeName, modifierIds = []) {
+  const active = new Set(modifierIds);
+  const prefixes = [];
+  if (active.has('accessory')) prefixes.push('Accessory to');
+  if (active.has('attempt')) prefixes.push('Attempted');
+  if (active.has('aggravated')) prefixes.push('Aggravated');
+  const suffix = active.has('govEmployee') ? ' of a Government Employee' : '';
+  return `${prefixes.join(' ')}${prefixes.length ? ' ' : ''}${chargeName}${suffix}`;
+}
+function formatChargeSelection(charge) {
+  if (typeof charge === 'string') return formatCharge(charge);
+  const base = formatCharge(charge.code || '');
+  const [code, ...nameParts] = base.split(' - ');
+  const name = nameParts.join(' - ') || code;
+  return `${code} - ${formatChargeWithModifiers(name, charge.modifiers || [])}`;
+}
 function buildChargeCounts(charges = []) {
-  return charges.reduce((acc, code) => {
-    acc[code] = (acc[code] || 0) + 1;
+  return charges.reduce((acc, charge) => {
+    const key = chargeSelectionKey(charge);
+    acc[key] = acc[key] || { charge, count: 0 };
+    acc[key].count += 1;
     return acc;
   }, {});
 }
 function formatChargeCounts(charges = []) {
-  const entries = Object.entries(buildChargeCounts(charges));
+  const entries = Object.values(buildChargeCounts(charges));
   if (!entries.length) return 'None';
-  return entries.map(([code, count]) => `${formatCharge(code)}${count > 1 ? ` (x${count})` : ''}`).join(', ');
+  return entries.map(({ charge, count }) => `${formatChargeSelection(charge)}${count > 1 ? ` (x${count})` : ''}`).join(', ');
 }
 let modalState = null;
 let currentTemplate = 'outreach';
@@ -1580,7 +1624,7 @@ function openHrRecordModal(id = '') {
     modal_fields.innerHTML = `
       <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${current.caseNumber || ''}" placeholder="26-CM-0005"></div>
       <div class="field"><label>Client</label><input id="modal_client" value="${current.client || ''}" placeholder="Client Name"></div>
-      <div class="field"><label>Charges</label><div class="chargeSelector"><input id="modal_chargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="modal_charges_options" class="chargeList"></div><div id="modal_selected_charges" class="selectedChargeList"></div></div></div>
+      <div class="field"><label>Charges</label><div class="chargeSelector"><div id="modal_charge_modifiers" class="chargeModifiers"></div><input id="modal_chargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="modal_charges_options" class="chargeList"></div><div id="modal_selected_charges" class="selectedChargeList"></div></div></div>
       <div class="field"><label>Status</label><select id="modal_status">${ONGOING_CASE_STATUS_OPTIONS.map(status => `<option value="${status}" ${current.status === status ? 'selected' : ''}>${status}</option>`).join('')}</select></div>
       <div class="field"><label>Assigned Attorney</label><select id="modal_assignedAttorney"><option value="">Select attorney</option>${attorneys.map(name => `<option value="${name}" ${current.assignedAttorney === name ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
       <div class="field"><label>Docket Link</label><input id="modal_docketLink" value="${current.docketLink || ''}" placeholder="https://..."></div>
@@ -1588,21 +1632,32 @@ function openHrRecordModal(id = '') {
     `;
     modal_backdrop.classList.remove('hidden');
     const search = document.getElementById('modal_chargeSearch');
+    const modifiersContainer = document.getElementById('modal_charge_modifiers');
     const optionsContainer = document.getElementById('modal_charges_options');
     const selectedContainer = document.getElementById('modal_selected_charges');
+    const modifierOptions = [
+      { id: 'accessory', label: 'Accessory to a Crime' },
+      { id: 'attempt', label: 'Attempt of a Crime' },
+      { id: 'aggravated', label: 'Aggravated Crime' },
+      { id: 'govEmployee', label: 'Crime against a Government Employee' }
+    ];
+    const activeModifiers = new Set();
     const renderSelectedCharges = () => {
-      const entries = Object.entries(buildChargeCounts(chargeSelections));
-      selectedContainer.innerHTML = entries.length ? entries.map(([code, count]) => `
+      const entries = Object.values(buildChargeCounts(chargeSelections));
+      selectedContainer.innerHTML = entries.length ? entries.map(({ charge, count }) => {
+        const key = chargeSelectionKey(charge);
+        return `
         <div class="selectedChargeItem">
-          <span class="selectedChargeText">${formatCharge(code)}${count > 1 ? ` (x${count})` : ''}</span>
-          <button class="small danger" data-charge-remove="${code}">Remove</button>
+          <span class="selectedChargeText">${formatChargeSelection(charge)}${count > 1 ? ` (x${count})` : ''}</span>
+          <button class="small danger" data-charge-remove="${key}">Remove</button>
         </div>
-      `).join('') : '<div class="recordMeta">None</div>';
+      `;
+      }).join('') : '<div class="recordMeta">None</div>';
       selectedContainer.querySelectorAll('[data-charge-remove]').forEach((btn) => {
         btn.addEventListener('click', (event) => {
           event.stopPropagation();
-          const code = btn.getAttribute('data-charge-remove');
-          const idx = chargeSelections.lastIndexOf(code);
+          const key = btn.getAttribute('data-charge-remove');
+          const idx = chargeSelections.map(chargeSelectionKey).lastIndexOf(key);
           if (idx >= 0) chargeSelections.splice(idx, 1);
           renderChargeOptions();
           renderSelectedCharges();
@@ -1631,7 +1686,7 @@ function openHrRecordModal(id = '') {
       `).join('') || '<div class="recordMeta">No charges found.</div>';
       optionsContainer.querySelectorAll('[data-charge-code]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          chargeSelections.push(btn.getAttribute('data-charge-code'));
+          chargeSelections.push({ code: btn.getAttribute('data-charge-code'), modifiers: [...activeModifiers] });
           renderChargeOptions();
           renderSelectedCharges();
           if (window.lucide?.createIcons) lucide.createIcons();
@@ -1639,7 +1694,22 @@ function openHrRecordModal(id = '') {
       });
       if (window.lucide?.createIcons) lucide.createIcons();
     };
+
+    const renderModifiers = () => {
+      modifiersContainer.innerHTML = modifierOptions.map((modifier) => `
+        <button type="button" class="chargeModifier ${activeModifiers.has(modifier.id) ? 'active' : ''}" data-modifier-id="${modifier.id}">${modifier.label}</button>
+      `).join('');
+      modifiersContainer.querySelectorAll('[data-modifier-id]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-modifier-id');
+          if (activeModifiers.has(id)) activeModifiers.delete(id);
+          else activeModifiers.add(id);
+          renderModifiers();
+        });
+      });
+    };
     search.addEventListener('input', renderChargeOptions);
+    renderModifiers();
     renderChargeOptions();
     renderSelectedCharges();
     return;
