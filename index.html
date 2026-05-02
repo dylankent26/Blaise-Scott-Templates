@@ -189,6 +189,10 @@ body {
   line-height: 1.4;
 }
 .pageTab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 10px 16px;
   background: transparent;
   border: 1px solid var(--border-color);
@@ -197,6 +201,10 @@ body {
   color: var(--text-secondary);
   font-weight: 600;
   transition: all 0.3s ease;
+}
+.pageTab i {
+  width: 16px;
+  height: 16px;
 }
 .pageTab:hover {
   background: var(--border-color);
@@ -537,8 +545,8 @@ button:active {
   transform: translateY(-1px);
 }
 button i {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   transition: transform 0.3s ease;
 }
 button:hover i {
@@ -1607,7 +1615,8 @@ select option {
 .personnelCard { border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
 .personnelCard.active { border-color: var(--accent-color); background: var(--accent-soft); }
 .sectionTabs { display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.sectionTab { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: transparent; color:var(--text-secondary); cursor:pointer; }
+.sectionTab { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: transparent; color:var(--text-secondary); cursor:pointer; }
+.sectionTab i { width: 16px; height: 16px; }
 .sectionTab.active { background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white)); color: var(--text-primary); border-color: var(--accent-color); }
 .sectionToolbar { display:flex; justify-content: space-between; align-items:center; gap:10px; margin-bottom: 10px; }
 .modalBackdrop { position: fixed; inset: 0; background: var(--overlay); display:flex; align-items:center; justify-content:center; z-index: 2000; }
@@ -1645,11 +1654,11 @@ h3 {
     </a>
   </div>
   <nav class="pageNav" aria-label="Primary navigation">
-    <div class="pageTab active" onclick="switchPage('home')">Home</div>
-    <div class="pageTab" onclick="switchPage('templates')">Templates</div>
-    <div class="pageTab" onclick="switchPage('hr')">HR</div>
-    <div class="pageTab" onclick="switchPage('clients')">Clients</div>
-    <div class="pageTab" onclick="switchPage('cases')">Cases</div>
+    <div class="pageTab active" onclick="switchPage('home')"><i data-lucide="layout-dashboard"></i>Home</div>
+    <div class="pageTab" onclick="switchPage('templates')"><i data-lucide="layers"></i>Templates</div>
+    <div class="pageTab" onclick="switchPage('hr')"><i data-lucide="users"></i>HR</div>
+    <div class="pageTab" onclick="switchPage('clients')"><i data-lucide="briefcase"></i>Clients</div>
+    <div class="pageTab" onclick="switchPage('cases')"><i data-lucide="folder-open"></i>Cases</div>
   </nav>
 </div>
 
@@ -1796,8 +1805,8 @@ h3 {
     <h3 id="modal_title">Modal</h3>
     <div id="modal_fields" class="recordGrid"></div>
     <div class="modalActions">
-      <button class="small" onclick="closeModal()">Cancel</button>
-      <button id="modal_submit" onclick="submitModal()">Save</button>
+      <button class="small" onclick="closeModal()"><i data-lucide="x"></i>Cancel</button>
+      <button id="modal_submit" onclick="submitModal()"><i data-lucide="save"></i>Save</button>
     </div>
   </div>
 </div>
@@ -1890,6 +1899,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+function refreshLucideIcons() {
+  if (window.lucide?.createIcons) lucide.createIcons();
+}
 
 let hrPersonnel = [];
 let selectedPersonnelId = '';
@@ -2299,10 +2312,11 @@ function addExhibit(data = {}) {
       <textarea class="exhibitReason">${data.reason || ''}</textarea>
     </div>
     <div class="exhibit-actions">
-      <button class="small" onclick="this.closest('.exhibitBox').remove(); generate();">Remove Exhibit</button>
+      <button class="small" onclick="this.closest('.exhibitBox').remove(); generate();"><i data-lucide="trash-2"></i>Remove Exhibit</button>
     </div>`;
   document.getElementById('exhibits').appendChild(div);
   div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', generate));
+  refreshLucideIcons();
   generate();
 }
 
@@ -2381,14 +2395,16 @@ function generate() {
 function copyOutput(){
   const out = document.getElementById('output');
   const button = document.getElementById('copyButton');
-  const originalText = button.textContent;
+  const originalHtml = button.innerHTML;
   out.select();
   navigator.clipboard.writeText(out.value).then(() => {
-    button.textContent = 'Copied!';
-    setTimeout(() => button.textContent = originalText, 1500);
+    button.innerHTML = '<i data-lucide="check"></i>Copied!';
+    refreshLucideIcons();
+    setTimeout(() => { button.innerHTML = originalHtml; refreshLucideIcons(); }, 1500);
   }).catch(() => {
-    button.textContent = 'Copy Failed';
-    setTimeout(() => button.textContent = originalText, 1500);
+    button.innerHTML = '<i data-lucide="alert-circle"></i>Copy Failed';
+    refreshLucideIcons();
+    setTimeout(() => { button.innerHTML = originalHtml; refreshLucideIcons(); }, 1500);
   });
 }
 
@@ -2421,9 +2437,10 @@ function loadDrafts(){
   list.innerHTML = '';
   drafts.forEach((d,i) => {
     const wrap = document.createElement('div');
-    wrap.innerHTML = `<button onclick="loadDraft(${i})">Load Draft ${i+1} - ${d.template} - ${d.savedAt}</button> <button class="small" onclick="deleteDraft(${i})">Delete</button>`;
+    wrap.innerHTML = `<button onclick="loadDraft(${i})"><i data-lucide="folder-open"></i>Load Draft ${i+1} - ${d.template} - ${d.savedAt}</button> <button class="small danger" onclick="deleteDraft(${i})"><i data-lucide="trash-2"></i>Delete</button>`;
     list.appendChild(wrap);
   });
+  refreshLucideIcons();
 }
 
 function loadDraft(i){
@@ -2440,10 +2457,10 @@ function deleteDraft(i){
 }
 
 const hrSections = {
-  strikes: { label: 'Strikes / Discipline', fields: ['strikeValue', 'date', 'issuedBy', 'reason', 'notes'] },
-  caseHistory: { label: 'Case History', fields: [] },
-  ongoingCases: { label: 'Ongoing Cases', fields: [] },
-  performanceReviews: { label: 'Performance Reviews', fields: ['reviewDate', 'reviewer', 'rating', 'strengths', 'issues', 'improvementNotes'] }
+  strikes: { label: 'Strikes / Discipline', icon: 'shield-alert', fields: ['strikeValue', 'date', 'issuedBy', 'reason', 'notes'] },
+  caseHistory: { label: 'Case History', icon: 'history', fields: [] },
+  ongoingCases: { label: 'Ongoing Cases', icon: 'folder-open', fields: [] },
+  performanceReviews: { label: 'Performance Reviews', icon: 'star', fields: ['reviewDate', 'reviewer', 'rating', 'strengths', 'issues', 'improvementNotes'] }
 };
 
 function getRecords(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
@@ -2458,9 +2475,10 @@ function renderRecordList(key, listId, formatter) {
   rows.forEach((row, i) => {
     const el = document.createElement('div');
     el.className = 'recordItem';
-    el.innerHTML = `<div class="recordHeader"><span>${formatter.title(row)}</span><button class="small" onclick="deleteRecord('${key}', ${i}, '${listId}', '${formatter.name}')">Delete</button></div><div class="recordMeta">${formatter.body(row)}</div>`;
+    el.innerHTML = `<div class="recordHeader"><span>${formatter.title(row)}</span><button class="small danger" onclick="deleteRecord('${key}', ${i}, '${listId}', '${formatter.name}')"><i data-lucide="trash-2"></i>Delete</button></div><div class="recordMeta">${formatter.body(row)}</div>`;
     list.appendChild(el);
   });
+  refreshLucideIcons();
 }
 const formatters = {
   hr: { name: 'hr', title: r => r.name || 'Unnamed Personnel File', body: r => `Role: ${r.role || '-'}\nPhone: ${r.phone || '-'}\nNotes: ${r.notes || '-'}` },
@@ -2477,13 +2495,14 @@ function renderHrList() {
   hrPersonnel.forEach((row) => {
     const el = document.createElement('div');
     el.className = `personnelCard ${selectedPersonnelId === row.id ? 'active' : ''}`;
-    el.innerHTML = `<div class="recordHeader"><span>${formatters.hr.title(row)}</span><div><button class="small" onclick="openPersonnelModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${formatters.hr.body(row)}</div>`;
+    el.innerHTML = `<div class="recordHeader"><span>${formatters.hr.title(row)}</span><div><button class="small" onclick="openPersonnelModal('${row.id}')"><i data-lucide="edit-3"></i>Edit</button> <button class="small danger" onclick="deleteHrRecord('${row.id}')"><i data-lucide="trash-2"></i>Delete</button></div></div><div class="recordMeta">${formatters.hr.body(row)}</div>`;
     el.addEventListener('click', (event) => {
       if (event.target.closest('button')) return;
       selectPersonnel(row.id);
     });
     list.appendChild(el);
   });
+  refreshLucideIcons();
 }
 function getSelectedPersonnel() {
   return hrPersonnel.find((row) => row.id === selectedPersonnelId) || {};
@@ -2544,7 +2563,7 @@ function renderHrSections() {
   Object.entries(hrSections).forEach(([key, cfg]) => {
     const btn = document.createElement('button');
     btn.className = `sectionTab ${activeHrSection === key ? 'active' : ''}`;
-    btn.textContent = cfg.label;
+    btn.innerHTML = `<i data-lucide="${escapeHtml(cfg.icon || 'circle')}"></i>${escapeHtml(cfg.label)}`;
     btn.onclick = () => { activeHrSection = key; renderHrSections(); subscribeHrSection(); };
     tabs.appendChild(btn);
   });
@@ -2552,6 +2571,7 @@ function renderHrSections() {
   document.getElementById('hr_section_add').innerHTML = activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory'
     ? '<i data-lucide="plus"></i>Add Case'
     : '<i data-lucide="plus"></i>Add Record';
+  refreshLucideIcons();
 }
 function getStrikeIssuedByName(row = {}) {
   return toTitleCase(row.issuedByName || getAssignedLawyerName(row.issuedBy) || row.issuedBy || '-');
@@ -2713,7 +2733,7 @@ function renderHrSectionList() {
     const meta = Object.entries(row).filter(([k]) => !['id', 'createdAt', 'updatedAt'].includes(k)).map(([k,v]) => `${k}: ${v || 'None'}`).join('\n');
     const el = document.createElement('div');
     el.className = 'recordItem';
-    el.innerHTML = `<div class="recordHeader"><span>${title}</span><div><button class="small" onclick="openHrRecordModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrSectionRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${meta}</div>`;
+    el.innerHTML = `<div class="recordHeader"><span>${title}</span><div><button class="small" onclick="openHrRecordModal('${row.id}')"><i data-lucide="edit-3"></i>Edit</button> <button class="small danger" onclick="deleteHrSectionRecord('${row.id}')"><i data-lucide="trash-2"></i>Delete</button></div></div><div class="recordMeta">${meta}</div>`;
     hr_section_list.appendChild(el);
   });
 }
@@ -2758,7 +2778,7 @@ function openModal(title, fields, values, onSubmit) {
   modalState = { fields, onSubmit };
   modal_title.textContent = title;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Save';
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
   submitButton.className = '';
   submitButton.disabled = false;
   modal_fields.innerHTML = fields.map((field) => {
@@ -2772,12 +2792,13 @@ function openModal(title, fields, values, onSubmit) {
     return `<div class="field"><label>${field.label}</label><input id="modal_${field.key}" value="${value}" placeholder="${field.label}"></div>`;
   }).join('');
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
 }
 function closeModal() {
   modal_backdrop.classList.add('hidden');
   modalState = null;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Save';
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
   submitButton.className = '';
   submitButton.disabled = false;
 }
@@ -2826,6 +2847,10 @@ function openClientModal(id = '') {
     }
   };
   modal_title.textContent = id ? 'Edit Client' : 'New Client';
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
+  submitButton.className = '';
+  submitButton.disabled = false;
   modal_fields.innerHTML = `
     <div class="clientModalGrid">
       <div class="field"><label>Client Name</label><input id="modal_client_name" value="${escapeHtml(current.name || '')}" placeholder="Client Name"></div>
@@ -2849,6 +2874,7 @@ function openClientModal(id = '') {
   startDateInput.addEventListener('input', renderPreview);
   startDateInput.addEventListener('change', renderPreview);
   renderPreview();
+  refreshLucideIcons();
 }
 function sortCases(rows = []) {
   return [...rows].sort((a, b) => {
@@ -2942,7 +2968,7 @@ function setupChargeSelector(chargeSelections) {
       return `
         <div class="selectedChargeItem">
           <span class="selectedChargeText">${escapeHtml(formatChargeSelection(charge))}${count > 1 ? ` (x${count})` : ''}</span>
-          <button type="button" class="small danger" data-charge-remove="${escapeHtml(key)}">Remove</button>
+          <button type="button" class="small danger" data-charge-remove="${escapeHtml(key)}"><i data-lucide="trash-2"></i>Remove</button>
         </div>`;
     }).join('') : '<div class="recordMeta">No charges selected.</div>';
     selectedContainer.querySelectorAll('[data-charge-remove]').forEach((btn) => {
@@ -2955,6 +2981,7 @@ function setupChargeSelector(chargeSelections) {
         renderSelectedCharges();
       });
     });
+    refreshLucideIcons();
   };
   const renderChargeOptions = () => {
     const q = search.value.trim().toLowerCase();
@@ -3038,6 +3065,10 @@ function openCaseModal(id = '', preselectedLawyerId = '', defaultStatus = 'Ongoi
     }
   };
   modal_title.textContent = id ? 'Edit Case' : 'New Case';
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
+  submitButton.className = '';
+  submitButton.disabled = false;
   modal_fields.innerHTML = `
     <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${escapeHtml(current.caseNumber || '')}" placeholder="00-CM-0000"></div>
     <div class="field"><label>Client</label><select id="modal_clientId"><option value="">Select client</option>${clientRows.map((client) => `<option value="${escapeHtml(client.id)}" ${selectedCaseClientId === client.id ? 'selected' : ''}>${escapeHtml(client.name || 'Unnamed Client')}</option>`).join('')}</select></div>
@@ -3048,7 +3079,7 @@ function openCaseModal(id = '', preselectedLawyerId = '', defaultStatus = 'Ongoi
   `;
   modal_backdrop.classList.remove('hidden');
   setupChargeSelector(chargeSelections);
-  if (window.lucide?.createIcons) lucide.createIcons();
+  refreshLucideIcons();
 }
 function openStrikeModal(id = '') {
   if (!selectedPersonnelId) return;
@@ -3100,7 +3131,7 @@ function openStrikeModal(id = '') {
   };
   modal_title.textContent = id ? 'Edit Strikes / Discipline Record' : 'Add Strikes / Discipline Record';
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Save';
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
   submitButton.className = '';
   modal_fields.innerHTML = `
     <div class="strikeModalGrid">
@@ -3115,6 +3146,7 @@ function openStrikeModal(id = '') {
   const dateInput = document.getElementById('modal_date');
   dateInput.addEventListener('focus', () => openDatePicker(dateInput));
   dateInput.addEventListener('click', () => openDatePicker(dateInput));
+  refreshLucideIcons();
 }
 function openPerformanceReviewModal(id = '') {
   if (!selectedPersonnelId) return;
@@ -3159,7 +3191,7 @@ function openPerformanceReviewModal(id = '') {
   };
   modal_title.textContent = id ? 'Edit Performance Review' : 'Add Performance Review';
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Save';
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save';
   submitButton.className = '';
   modal_fields.innerHTML = `
     <div class="reviewModalGrid">
@@ -3175,6 +3207,7 @@ function openPerformanceReviewModal(id = '') {
   const dateInput = document.getElementById('modal_reviewDate');
   dateInput.addEventListener('focus', () => openDatePicker(dateInput));
   dateInput.addEventListener('click', () => openDatePicker(dateInput));
+  refreshLucideIcons();
 }
 function openHrRecordModal(id = '') {
   if (!selectedPersonnelId) return;
@@ -3290,9 +3323,10 @@ function openDeleteCaseModal(row = {}) {
     </div>
   `;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Confirm Delete';
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
   submitButton.className = 'small danger';
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
 }
 function openCloseCaseModal(row = {}) {
   modalState = {
@@ -3312,9 +3346,10 @@ function openCloseCaseModal(row = {}) {
     <div class="field"><label>Final Status</label><select id="modal_final_status">${CASE_FINAL_STATUS_OPTIONS.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('')}</select></div>
   `;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Close Case';
+  submitButton.innerHTML = '<i data-lucide="check-circle"></i>Close Case';
   submitButton.className = '';
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
 }
 function openDeleteStrikeModal(row = {}) {
   modalState = {
@@ -3332,9 +3367,10 @@ function openDeleteStrikeModal(row = {}) {
     </div>
   `;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Confirm Delete';
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
   submitButton.className = 'small danger';
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
 }
 function openDeletePerformanceReviewModal(row = {}) {
   modalState = {
@@ -3352,9 +3388,10 @@ function openDeletePerformanceReviewModal(row = {}) {
     </div>
   `;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Confirm Delete';
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
   submitButton.className = 'small danger';
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
 }
 async function archiveClient(id) {
   if (!id) return;
@@ -3407,10 +3444,11 @@ function openDeleteClientModal(id = '') {
     </div>
   `;
   const submitButton = document.getElementById('modal_submit');
-  submitButton.textContent = 'Confirm Delete';
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
   submitButton.className = 'small danger';
   submitButton.disabled = true;
   modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
   const confirmInput = document.getElementById('modal_delete_client_confirm');
   confirmInput.addEventListener('input', () => {
     submitButton.disabled = confirmInput.value.trim() !== 'DELETE';
@@ -3519,10 +3557,10 @@ function renderClientDetail() {
 function renderClientTabs() {
   const tabs = document.getElementById('client_case_tabs');
   const sections = [
-    ['ongoing', 'Ongoing Cases'],
-    ['history', 'Case History']
+    ['ongoing', 'Ongoing Cases', 'folder-open'],
+    ['history', 'Case History', 'history']
   ];
-  tabs.innerHTML = sections.map(([key, label]) => `<button class="sectionTab ${activeClientCaseSection === key ? 'active' : ''}" data-client-section="${key}">${label}</button>`).join('');
+  tabs.innerHTML = sections.map(([key, label, icon]) => `<button class="sectionTab ${activeClientCaseSection === key ? 'active' : ''}" data-client-section="${key}"><i data-lucide="${escapeHtml(icon)}"></i>${escapeHtml(label)}</button>`).join('');
   tabs.querySelectorAll('[data-client-section]').forEach((btn) => {
     btn.addEventListener('click', () => {
       activeClientCaseSection = btn.getAttribute('data-client-section');
