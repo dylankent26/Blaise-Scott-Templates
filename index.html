@@ -601,11 +601,12 @@ select option {
   width: 100%;
   padding: 11px 12px;
   margin-bottom: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   text-align: left;
   gap: 10px;
+  box-sizing: border-box;
 }
 .ongoingCaseRow .recordMeta {
   max-height: 0;
@@ -661,6 +662,7 @@ select option {
   box-shadow: 0 10px 24px rgba(79, 124, 255, 0.12);
 }
 .ongoingCaseTitle {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -668,15 +670,25 @@ select option {
 .ongoingCaseStatus {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: #cbd5e1;
-  font-size: 0.9rem;
+  justify-self: end;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
   flex-shrink: 0;
+  background: rgba(15, 20, 25, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 999px;
+  padding: 5px 10px;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .statusDot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .chargeSelector {
   margin-top: 8px;
@@ -1532,8 +1544,8 @@ function renderHrSectionList() {
         <div class="recordHeader">
           <span class="ongoingCaseTitle">#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
           <span class="ongoingCaseStatus">
-            <span>${status}</span>
             <span class="statusDot" style="background:${isOpen ? '#22c55e' : '#ef4444'};"></span>
+            <span>${status}</span>
           </span>
         </div>
         <div class="recordMeta">
