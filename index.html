@@ -576,6 +576,17 @@ select option {
   background: #0f1419;
   color: #e0e6ff;
 }
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px 16px;
+}
+.recordList { margin-top: 18px; display: grid; gap: 10px; }
+.recordItem { border: 1px solid #1f2a3a; border-radius: 12px; padding: 12px; background: #0a1016; }
+.recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:#e0e6ff; margin-bottom:6px; }
+.recordMeta { color:#a0a8c4; font-size: .9rem; white-space: pre-wrap; }
+
 </style>
 </head>
 <body>
@@ -677,21 +688,45 @@ select option {
 <div id="page_hr" class="pageCard" style="display:none;">
   <div class="fieldsContainer">
     <div class="sectionHeader"><i data-lucide="users"></i>HR</div>
-    <p>HR page placeholder for onboarding templates and staff resources.</p>
+    <div class="recordGrid">
+      <div class="field"><label>Personnel Name</label><input id="hr_name" placeholder="Jane Doe"></div>
+      <div class="field"><label>Performance Reviews</label><textarea id="hr_reviews" placeholder="Attach review notes, links, or file references..."></textarea></div>
+      <div class="field"><label>Disciplinary Actions</label><textarea id="hr_disciplinary" placeholder="Attach action notes..."></textarea></div>
+      <div class="field"><label>Training Logs</label><textarea id="hr_training" placeholder="Attach completed trainings..."></textarea></div>
+      <div class="field"><label>Cases Worked</label><textarea id="hr_cases_worked" placeholder="Attach case list..."></textarea></div>
+    </div>
+    <div class="buttonGroup"><button onclick="saveHrRecord()"><i data-lucide="save"></i>Save Personnel File</button></div>
+    <div id="hr_list" class="recordList"></div>
   </div>
 </div>
 
 <div id="page_clients" class="pageCard" style="display:none;">
   <div class="fieldsContainer">
     <div class="sectionHeader"><i data-lucide="briefcase"></i>Clients</div>
-    <p>Clients page placeholder for client records and communication.</p>
+    <div class="recordGrid">
+      <div class="field"><label>Client Name</label><input id="client_name" placeholder="Client Name"></div>
+      <div class="field"><label>Phone</label><input id="client_phone" placeholder="555-0100"></div>
+      <div class="field"><label>Active Cases</label><input id="client_active_cases" placeholder="Case numbers or count"></div>
+      <div class="field"><label>Notes</label><textarea id="client_notes" placeholder="Client notes..."></textarea></div>
+    </div>
+    <div class="buttonGroup"><button onclick="saveClientRecord()"><i data-lucide="save"></i>Save Client</button></div>
+    <div id="client_list" class="recordList"></div>
   </div>
 </div>
 
 <div id="page_cases" class="pageCard" style="display:none;">
   <div class="fieldsContainer">
     <div class="sectionHeader"><i data-lucide="folder-open"></i>Cases</div>
-    <p>Cases page placeholder for case tracking and matter details.</p>
+    <div class="recordGrid">
+      <div class="field"><label>Case Number</label><input id="case_number" placeholder="00-CM-0000"></div>
+      <div class="field"><label>Client</label><input id="case_client" placeholder="Client Name"></div>
+      <div class="field"><label>Charges</label><textarea id="case_charges" placeholder="Charge details..."></textarea></div>
+      <div class="field"><label>Status</label><input id="case_status" placeholder="Open / Closed / Pending"></div>
+      <div class="field"><label>Outcome</label><input id="case_outcome" placeholder="Outcome"></div>
+      <div class="field"><label>Notes</label><textarea id="case_notes" placeholder="Case notes..."></textarea></div>
+    </div>
+    <div class="buttonGroup"><button onclick="saveCaseRecord()"><i data-lucide="save"></i>Save Case</button></div>
+    <div id="case_list" class="recordList"></div>
   </div>
 </div>
 
@@ -1095,6 +1130,47 @@ function deleteDraft(i){
   loadDrafts();
 }
 
+function getRecords(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
+function setRecords(key, rows) { localStorage.setItem(key, JSON.stringify(rows)); }
+function renderRecordList(key, listId, formatter) {
+  const list = document.getElementById(listId);
+  const rows = getRecords(key);
+  list.innerHTML = '';
+  rows.forEach((row, i) => {
+    const el = document.createElement('div');
+    el.className = 'recordItem';
+    el.innerHTML = `<div class="recordHeader"><span>${formatter.title(row)}</span><button class="small" onclick="deleteRecord('${key}', ${i}, '${listId}', '${formatter.name}')">Delete</button></div><div class="recordMeta">${formatter.body(row)}</div>`;
+    list.appendChild(el);
+  });
+}
+const formatters = {
+  hr: { name: 'hr', title: r => r.name || 'Unnamed Personnel File', body: r => `Performance Reviews: ${r.reviews || '-'}\nDisciplinary Actions: ${r.disciplinary || '-'}\nTraining Logs: ${r.training || '-'}\nCases Worked: ${r.casesWorked || '-'}` },
+  client: { name: 'client', title: r => r.name || 'Unnamed Client', body: r => `Phone: ${r.phone || '-'}\nActive Cases: ${r.activeCases || '-'}\nNotes: ${r.notes || '-'}` },
+  case: { name: 'case', title: r => r.caseNumber || 'Unnamed Case', body: r => `Client: ${r.client || '-'}\nCharges: ${r.charges || '-'}\nStatus: ${r.status || '-'}\nOutcome: ${r.outcome || '-'}\nNotes: ${r.notes || '-'}` }
+};
+function deleteRecord(key, i, listId, formatterName) {
+  const rows = getRecords(key); rows.splice(i, 1); setRecords(key, rows);
+  renderRecordList(key, listId, formatters[formatterName]);
+}
+function saveHrRecord() {
+  const rows = getRecords('hrRecords');
+  rows.push({ name: hr_name.value.trim(), reviews: hr_reviews.value.trim(), disciplinary: hr_disciplinary.value.trim(), training: hr_training.value.trim(), casesWorked: hr_cases_worked.value.trim() });
+  setRecords('hrRecords', rows);
+  renderRecordList('hrRecords', 'hr_list', formatters.hr);
+}
+function saveClientRecord() {
+  const rows = getRecords('clientRecords');
+  rows.push({ name: client_name.value.trim(), phone: client_phone.value.trim(), activeCases: client_active_cases.value.trim(), notes: client_notes.value.trim() });
+  setRecords('clientRecords', rows);
+  renderRecordList('clientRecords', 'client_list', formatters.client);
+}
+function saveCaseRecord() {
+  const rows = getRecords('caseRecords');
+  rows.push({ caseNumber: case_number.value.trim(), client: case_client.value.trim(), charges: case_charges.value.trim(), status: case_status.value.trim(), outcome: case_outcome.value.trim(), notes: case_notes.value.trim() });
+  setRecords('caseRecords', rows);
+  renderRecordList('caseRecords', 'case_list', formatters.case);
+}
+
 function clearForm(){
   if (!confirm('Are you sure you want to clear all form fields?')) return;
   
@@ -1129,6 +1205,9 @@ loadSettings();
 addExhibit();
 setTemplate('outreach');
 loadDrafts();
+renderRecordList('hrRecords', 'hr_list', formatters.hr);
+renderRecordList('clientRecords', 'client_list', formatters.client);
+renderRecordList('caseRecords', 'case_list', formatters.case);
 if (window.lucide) lucide.createIcons();
 generate();
 </script>
