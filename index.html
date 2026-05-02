@@ -6,12 +6,37 @@
 <title>Blaise & Scott BBCode Tool</title>
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
+:root {
+  --bg-main: #0d1118;
+  --bg-card: #131a23;
+  --border-color: #273142;
+  --text-primary: #e6ebf7;
+  --text-secondary: #9aa7bd;
+  --accent-color: #5f7dd6;
+  --danger-color: #c96b72;
+  --success-color: #78b88a;
+  --bg-elevated: #161f2a;
+  --bg-muted: #101722;
+  --accent-soft: rgba(95, 125, 214, 0.18);
+  --accent-border: rgba(95, 125, 214, 0.42);
+  --accent-glow: rgba(95, 125, 214, 0.25);
+  --danger-soft: rgba(201, 107, 114, 0.2);
+  --danger-border: rgba(201, 107, 114, 0.45);
+  --danger-text: #f1c4c9;
+
+  --border-strong: #324154;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.28);
+  --shadow-accent: 0 8px 30px rgba(95, 125, 214, 0.12);
+}
+
+
 body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b0d12, #1a1f2e);
-  color: #e0e6ff;
+  background: linear-gradient(135deg, var(--bg-main), var(--bg-elevated));
+  color: var(--text-primary);
 }
 .container {
   max-width: 1400px;
@@ -24,26 +49,26 @@ body {
   gap: 12px;
   margin-bottom: 18px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #1f2a3a;
+  border-bottom: 1px solid var(--border-color);
 }
 .pageTab {
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid #2a3a4a;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
-  color: #a0a8c4;
+  color: var(--text-secondary);
   font-weight: 600;
   transition: all 0.3s ease;
 }
 .pageTab:hover {
-  background: #1f2a3a;
-  color: #e0e6ff;
+  background: var(--border-color);
+  color: var(--text-primary);
 }
 .pageTab.active {
-  background: linear-gradient(135deg, #4f7cff, #6a8cff);
-  border-color: #4f7cff;
-  color: #fff;
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  border-color: var(--accent-color);
+  color: var(--text-primary);
 }
 .pageCard {
   animation: fadeIn 0.4s ease-out;
@@ -52,7 +77,7 @@ body {
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
-  border-bottom: 1px solid #1f2a3a;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 16px;
   animation: slideDown 0.4s ease-out;
 }
@@ -69,26 +94,26 @@ body {
 .tab {
   padding: 10px 18px;
   background: transparent;
-  border: 1px solid #2a3a4a;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #a0a8c4;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
   font-weight: 500;
 }
 .tab:hover {
-  background: #1f2a3a;
+  background: var(--border-color);
   transform: translateY(-2px);
-  border-color: #3a4a5a;
+  border-color: var(--border-strong);
 }
 .tab.active {
-  background: linear-gradient(135deg, #4f7cff, #6a8cff);
-  color: #fff;
-  border-color: #4f7cff;
-  box-shadow: 0 4px 16px rgba(79, 124, 255, 0.2);
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 16px var(--accent-glow);
   transform: translateY(-2px);
 }
 .tab i {
@@ -132,21 +157,21 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: #0f1419;
-  border: 1px solid #1a2530;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
   height: fit-content;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-soft);
   transition: all 0.3s ease;
 }
 .templateList:hover {
-  border-color: #2a3a4a;
-  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-accent);
 }
 .templateList h3 {
   margin: 0 0 16px 0;
-  color: #e0e6ff;
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 600;
   display: flex;
@@ -156,7 +181,7 @@ body {
 .templateList h3 i {
   width: 18px;
   height: 18px;
-  color: #4f7cff;
+  color: var(--accent-color);
 }
 .templateList button {
   display: flex;
@@ -165,7 +190,7 @@ body {
   width: 100%;
   text-align: left;
   background: transparent;
-  color: #a0a8c4;
+  color: var(--text-secondary);
   border: 1px solid transparent;
   padding: 12px 16px;
   border-radius: 10px;
@@ -180,18 +205,18 @@ body {
   cursor: pointer;
 }
 .templateList button:hover {
-  background: rgba(79, 124, 255, 0.12);
-  color: #e0e6ff;
-  border-color: rgba(79, 124, 255, 0.35);
+  background: var(--accent-soft);
+  color: var(--text-primary);
+  border-color: var(--accent-border);
 }
 .templateList button:hover i {
-  color: #4f7cff;
+  color: var(--accent-color);
 }
 .templateList button.selected {
-  background: linear-gradient(135deg, #4f7cff, #6a8cff);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 24px rgba(79, 124, 255, 0.25);
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  color: var(--text-primary);
+  border: 1px solid rgba(230, 235, 247, 0.16);
+  box-shadow: 0 8px 24px var(--accent-glow);
 }
 .templateList button i {
   width: 18px;
@@ -204,9 +229,9 @@ textarea,
 select {
   width: 100%;
   box-sizing: border-box;
-  background: #0f1419;
-  color: #e0e6ff;
-  border: 1px solid #1a2530;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 12px 14px;
   transition: all 0.3s ease;
@@ -215,21 +240,21 @@ select {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #5a6a7a;
+  color: var(--text-secondary);
 }
 input:hover,
 textarea:hover,
 select:hover {
-  border-color: #2a3a4a;
-  box-shadow: 0 2px 8px rgba(79, 124, 255, 0.05);
+  border-color: var(--border-color);
+  box-shadow: 0 2px 8px rgba(95, 125, 214, 0.05);
 }
 input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  border-color: #4f7cff;
-  background: #0f1419;
-  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+  border-color: var(--accent-color);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(95, 125, 214, 0.15);
   transform: translateY(-1px);
 }
 textarea {
@@ -243,7 +268,7 @@ textarea {
 .field label {
   display: block;
   margin-bottom: 8px;
-  color: #a0a8c4;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -251,82 +276,82 @@ textarea {
   transition: color 0.3s ease;
 }
 .field:focus-within label {
-  color: #4f7cff;
+  color: var(--accent-color);
 }
 .fieldsContainer {
   width: 100%;
-  background: #0f1419;
-  border: 1px solid #1a2530;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
   box-sizing: border-box;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-soft);
   transition: all 0.3s ease;
   animation: slideUp 0.5s ease-out 0.1s both;
 }
 .fieldsContainer:hover {
-  border-color: #2a3a4a;
-  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-accent);
 }
 #output {
   min-height: 360px;
   margin-top: 0;
   font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
-  background: #0f1419;
+  background: var(--bg-card);
   border: none;
   border-radius: 0;
   padding: 20px;
-  color: #e0e6ff;
+  color: var(--text-primary);
   font-size: 0.95rem;
   line-height: 1.6;
   transition: all 0.3s ease;
 }
 #output:hover {
-  background: #0f1419;
+  background: var(--bg-card);
 }
 .outputContainer {
   width: 100%;
-  background: #0f1419;
-  border: 1px solid #1a2530;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   margin-top: 30px;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-soft);
   animation: slideUp 0.5s ease-out 0.15s both;
   transition: all 0.3s ease;
 }
 .outputContainer:hover {
-  border-color: #2a3a4a;
-  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-accent);
 }
 .outputHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid #1a2530;
-  color: #e0e6ff;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
   font-weight: 700;
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: linear-gradient(135deg, rgba(79, 124, 255, 0.05), transparent);
+  background: linear-gradient(135deg, rgba(95, 125, 214, 0.05), transparent);
 }
 .sectionHeader {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  color: #e0e6ff;
+  color: var(--text-primary);
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 .sectionHeader i {
-  color: #4f7cff;
+  color: var(--accent-color);
   width: 18px;
   height: 18px;
 }
@@ -336,8 +361,8 @@ button {
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #4f7cff;
-  color: white;
+  background: var(--accent-color);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
@@ -357,7 +382,7 @@ button::before {
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(230, 235, 247, 0.1);
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
 }
@@ -366,9 +391,9 @@ button:active::before {
   height: 300px;
 }
 button:hover {
-  background: linear-gradient(135deg, #6a8cff, #7a9cff);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 85%, white), color-mix(in srgb, var(--accent-color) 72%, white));
   transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(79, 124, 255, 0.3);
+  box-shadow: 0 12px 24px rgba(95, 125, 214, 0.3);
 }
 button:active {
   transform: translateY(-1px);
@@ -382,27 +407,27 @@ button:hover i {
   transform: scale(1.15);
 }
 button.small {
-  background: #1a2530;
-  color: #e0e6ff;
+  background: var(--border-color);
+  color: var(--text-primary);
   height: auto;
   padding: 9px 14px;
   font-size: 0.9rem;
 }
 button.small:hover {
-  background: #2a3a4a;
+  background: var(--border-color);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(79, 124, 255, 0.15);
+  box-shadow: 0 6px 16px rgba(95, 125, 214, 0.15);
 }
 button.small i {
   width: 16px;
   height: 16px;
 }
 #copyButton, #copyButtonHeader {
-  background: linear-gradient(135deg, #4f7cff, #6a8cff);
-  box-shadow: 0 0 20px rgba(79, 124, 255, 0.25);
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 #copyButton:hover, #copyButtonHeader:hover {
-  box-shadow: 0 12px 32px rgba(79, 124, 255, 0.4);
+  box-shadow: 0 12px 32px rgba(95, 125, 214, 0.4);
 }
 .buttonGroup {
   display: flex;
@@ -416,9 +441,9 @@ button.small i {
 }
 .datePicker {
   position: absolute;
-  background: #0f1419;
-  color: #e0e6ff;
-  border: 1px solid #1a2530;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px;
   z-index: 1000;
@@ -450,13 +475,13 @@ button.small i {
   border: none;
   border-radius: 8px;
   padding: 6px 12px;
-  background: #1a2530;
-  color: #e0e6ff;
+  background: var(--border-color);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 .datePickerHeader button:hover {
-  background: #2a3a4a;
+  background: var(--border-color);
   transform: scale(1.05);
 }
 .datePickerHeader div {
@@ -470,48 +495,48 @@ button.small i {
 }
 .datePickerWeekday {
   font-size: 0.75rem;
-  color: #5a6a7a;
+  color: var(--text-secondary);
   text-align: center;
   font-weight: 500;
 }
 .datePickerGrid button {
   border: none;
   border-radius: 8px;
-  background: #1a2530;
-  color: #e0e6ff;
+  background: var(--border-color);
+  color: var(--text-primary);
   padding: 8px 0;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.85rem;
 }
 .datePickerGrid button:hover {
-  background: #2a3a4a;
+  background: var(--border-color);
   transform: scale(1.05);
 }
 .datePickerGrid button.selected {
-  background: linear-gradient(135deg, #4f7cff, #6a8cff);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3);
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(95, 125, 214, 0.3);
 }
 .exhibitBox {
-  border: 1px solid #1a2530;
+  border: 1px solid var(--border-color);
   padding: 14px;
   border-radius: 12px;
   margin-bottom: 14px;
-  background: #0a0f15;
+  background: var(--bg-muted);
   transition: all 0.3s ease;
   display: block;
   animation: slideUp 0.4s ease-out;
 }
 .exhibitBox:hover {
-  border-color: #2a3a4a;
-  background: #0f1419;
-  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.1);
+  border-color: var(--border-color);
+  background: var(--bg-card);
+  box-shadow: 0 4px 12px rgba(95, 125, 214, 0.1);
 }
 .exhibitBox > strong {
   display: block;
   margin-bottom: 12px;
-  color: #e0e6ff;
+  color: var(--text-primary);
 }
 .exhibitBox .exhibit-field {
   margin-bottom: 12px;
@@ -519,7 +544,7 @@ button.small i {
 .exhibitBox .exhibit-field label {
   display: block;
   margin-bottom: 6px;
-  color: #a0a8c4;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -563,12 +588,12 @@ button.small i {
   stroke-width: 2;
 }
 h3 {
-  color: #e0e6ff;
+  color: var(--text-primary);
   margin: 0 0 16px 0;
   font-size: 1.05rem;
 }
 label {
-  color: #a0a8c4;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -576,8 +601,8 @@ select {
   cursor: pointer;
 }
 select option {
-  background: #0f1419;
-  color: #e0e6ff;
+  background: var(--bg-card);
+  color: var(--text-primary);
 }
 
 .recordGrid {
@@ -586,9 +611,9 @@ select option {
   gap: 12px 16px;
 }
 .recordList { margin-top: 18px; display: grid; gap: 10px; }
-.recordItem { border: 1px solid #1f2a3a; border-radius: 12px; padding: 12px; background: #0a1016; }
-.recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:#e0e6ff; margin-bottom:6px; }
-.recordMeta { color:#a0a8c4; font-size: .9rem; white-space: pre-wrap; }
+.recordItem { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; background: var(--bg-muted); }
+.recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:var(--text-primary); margin-bottom:6px; }
+.recordMeta { color:var(--text-secondary); font-size: .9rem; white-space: pre-wrap; }
 .ongoingCaseRow {
   padding: 0;
   margin-bottom: 8px;
@@ -629,12 +654,12 @@ select option {
   gap: 4px;
 }
 .ongoingCaseDetailRow {
-  color: #a0a8c4;
+  color: var(--text-secondary);
 }
 .ongoingCaseFooter {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #1f2a3a;
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
 }
@@ -647,19 +672,19 @@ select option {
   justify-content: center;
 }
 .ongoingCaseActions .danger {
-  background: rgba(239, 68, 68, 0.18);
-  border: 1px solid rgba(239, 68, 68, 0.45);
-  color: #fecaca;
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
 }
 .ongoingCaseActions .danger:hover {
-  background: rgba(239, 68, 68, 0.32);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
+  background: rgba(201, 107, 114, 0.32);
+  box-shadow: 0 6px 16px rgba(201, 107, 114, 0.2);
 }
 .ongoingCaseRow:hover {
   transform: translateY(-2px) scale(1.008);
-  border-color: #2a3a4a;
-  background: #0f1419;
-  box-shadow: 0 10px 24px rgba(79, 124, 255, 0.12);
+  border-color: var(--border-color);
+  background: var(--bg-card);
+  box-shadow: 0 10px 24px var(--accent-soft);
 }
 .ongoingCaseTitle {
   min-width: 0;
@@ -672,13 +697,13 @@ select option {
   align-items: center;
   justify-self: end;
   gap: 6px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.82rem;
   font-weight: 600;
   line-height: 1;
   flex-shrink: 0;
-  background: rgba(15, 20, 25, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: color-mix(in srgb, var(--bg-card) 88%, black);
+  border: 1px solid rgba(154, 167, 189, 0.35);
   border-radius: 999px;
   padding: 5px 10px;
   white-space: nowrap;
@@ -709,9 +734,9 @@ select option {
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 1px solid #2a3a4a;
-  background: #0f1419;
-  color: #a0a8c4;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-secondary);
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 0.8rem;
@@ -719,17 +744,17 @@ select option {
   cursor: pointer;
 }
 .chargeModifier.active {
-  background: rgba(79, 124, 255, 0.18);
-  border-color: rgba(79, 124, 255, 0.5);
-  color: #e0e6ff;
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--text-primary);
 }
 .chargeList {
   max-height: 280px;
   overflow: auto;
-  border: 1px solid #1a2530;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 8px;
-  background: #0a1016;
+  background: var(--bg-muted);
 }
 .chargeGroup {
   margin-bottom: 10px;
@@ -739,7 +764,7 @@ select option {
 }
 .chargeGroupHeader {
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -751,7 +776,7 @@ select option {
   align-items: center;
   gap: 10px;
   background: transparent;
-  color: #cbd5e1;
+  color: var(--text-primary);
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 6px 8px;
@@ -759,12 +784,12 @@ select option {
   cursor: pointer;
 }
 .chargeOption:hover {
-  background: rgba(79, 124, 255, 0.1);
-  border-color: rgba(79, 124, 255, 0.3);
+  background: rgba(95, 125, 214, 0.1);
+  border-color: rgba(95, 125, 214, 0.3);
 }
 .chargeOption.active {
-  background: rgba(79, 124, 255, 0.18);
-  border-color: rgba(79, 124, 255, 0.38);
+  background: var(--accent-soft);
+  border-color: rgba(95, 125, 214, 0.38);
 }
 .chargeCode, .chargeName {
   white-space: nowrap;
@@ -774,7 +799,7 @@ select option {
 .chargeCode {
   width: 70px;
   flex-shrink: 0;
-  color: #93c5fd;
+  color: color-mix(in srgb, var(--accent-color) 85%, white);
   font-weight: 600;
 }
 .chargeName {
@@ -782,7 +807,7 @@ select option {
 }
 .chargeCheck {
   opacity: 0;
-  color: #60a5fa;
+  color: color-mix(in srgb, var(--accent-color) 75%, white);
 }
 .chargeOption.active .chargeCheck {
   opacity: 1;
@@ -799,8 +824,8 @@ select option {
   gap: 10px;
   padding: 6px 8px;
   border-radius: 8px;
-  background: #101a26;
-  border: 1px solid #1f2a3a;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
 }
 .selectedChargeText {
   white-space: nowrap;
@@ -808,16 +833,16 @@ select option {
   text-overflow: ellipsis;
 }
 .personnelLayout { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
-.personnelListPanel, .personnelDetailPanel { border: 1px solid #1f2a3a; border-radius: 12px; background: #0a1016; padding: 14px; }
-.personnelCard { border: 1px solid #1f2a3a; border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
-.personnelCard.active { border-color: #4f7cff; background: rgba(79,124,255,0.12); }
+.personnelListPanel, .personnelDetailPanel { border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-muted); padding: 14px; }
+.personnelCard { border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
+.personnelCard.active { border-color: var(--accent-color); background: var(--accent-soft); }
 .sectionTabs { display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.sectionTab { padding: 8px 12px; border: 1px solid #2a3a4a; border-radius: 10px; background: transparent; color:#a0a8c4; cursor:pointer; }
-.sectionTab.active { background: linear-gradient(135deg, #4f7cff, #6a8cff); color: white; border-color: #4f7cff; }
+.sectionTab { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: transparent; color:var(--text-secondary); cursor:pointer; }
+.sectionTab.active { background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white)); color: var(--text-primary); border-color: var(--accent-color); }
 .sectionToolbar { display:flex; justify-content: space-between; align-items:center; gap:10px; margin-bottom: 10px; }
-.modalBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index: 2000; }
+.modalBackdrop { position: fixed; inset: 0; background: var(--overlay); display:flex; align-items:center; justify-content:center; z-index: 2000; }
 .modalBackdrop.hidden { display: none; }
-.modalCard { width: min(760px, 92vw); max-height: 88vh; overflow:auto; background:#0f1419; border:1px solid #2a3a4a; border-radius: 14px; padding: 18px; }
+.modalCard { width: min(760px, 92vw); max-height: 88vh; overflow:auto; background:var(--bg-card); border:1px solid var(--border-color); border-radius: 14px; padding: 18px; }
 .modalActions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 14px; }
 
 </style>
@@ -1544,7 +1569,7 @@ function renderHrSectionList() {
         <div class="recordHeader">
           <span class="ongoingCaseTitle">#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
           <span class="ongoingCaseStatus">
-            <span class="statusDot" style="background:${isOpen ? '#22c55e' : '#ef4444'};"></span>
+            <span class="statusDot" style="background:${isOpen ? 'var(--success-color)' : 'var(--danger-color)'};"></span>
             <span>${status}</span>
           </span>
         </div>
