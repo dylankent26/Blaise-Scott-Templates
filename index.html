@@ -50,10 +50,143 @@ body {
 }
  .pages {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: space-between;
   margin-bottom: 18px;
-  padding-bottom: 12px;
+  padding: 8px 0 14px;
   border-bottom: 1px solid var(--border-color);
+}
+.brandArea {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.brandLogoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px 6px 0;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  box-shadow: none;
+  transform: none;
+  transition: opacity 0.2s ease;
+}
+.brandLogoLink::before {
+  content: none;
+}
+.brandLogoLink:hover {
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.9;
+  transform: none;
+}
+.brandLogoLink:active {
+  transform: none;
+}
+.brandLogoLink:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 3px;
+}
+.brandLogo {
+  display: block;
+  width: auto;
+  height: 68px;
+  max-width: 300px;
+  object-fit: contain;
+}
+.pageNav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: auto;
+}
+.homeDashboard {
+  min-height: calc(100vh - 150px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 34px 0 20px;
+}
+.homePanel {
+  width: min(980px, 100%);
+}
+.homeLogo {
+  display: block;
+  width: auto;
+  height: 52px;
+  max-width: 230px;
+  object-fit: contain;
+  margin-bottom: 22px;
+}
+.homeTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+  font-weight: 750;
+}
+.homeSubtitle {
+  max-width: 680px;
+  margin: 12px 0 28px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.quickAccessGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+.quickAccessCard {
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  text-align: left;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.quickAccessCard:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--bg-card) 86%, var(--accent-color));
+  box-shadow: 0 12px 30px rgba(7, 11, 20, 0.45);
+}
+.quickAccessCard i {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-color);
+}
+.quickAccessCard span {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.quickAccessCard small {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 .pageTab {
   padding: 10px 16px;
@@ -428,6 +561,15 @@ button.small i {
   width: 16px;
   height: 16px;
 }
+button.small.danger {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+}
+button.small.danger:hover {
+  background: rgba(186, 103, 112, 0.28);
+  box-shadow: 0 6px 16px rgba(201, 107, 114, 0.2);
+}
 #copyButton, #copyButtonHeader {
   background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 88%, var(--accent-bright)));
   box-shadow: 0 0 20px var(--accent-glow);
@@ -585,6 +727,16 @@ button.small i {
   .tabs {
     flex-wrap: wrap;
   }
+  .pageNav {
+    margin-left: 0;
+  }
+  .personnelProfileGrid {
+    grid-template-columns: 1fr;
+  }
+  .casePageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 [data-lucide] {
@@ -620,6 +772,182 @@ select option {
 .recordItem { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; background: var(--bg-muted); }
 .recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:var(--text-primary); margin-bottom:6px; }
 .recordMeta { color:var(--text-secondary); font-size: .9rem; white-space: pre-wrap; }
+.personnelProfile {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+}
+.personnelProfileHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.personnelProfileTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+.personnelProfileRole {
+  margin-top: 4px;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.personnelProfileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.profileField {
+  min-width: 0;
+}
+.profileField.full {
+  grid-column: 1 / -1;
+}
+.profileLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.profileValue {
+  color: var(--text-primary);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.casePageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.casePageHeader .sectionHeader {
+  margin-bottom: 0;
+}
+.caseBoards {
+  display: grid;
+  gap: 22px;
+}
+.caseBoard {
+  min-width: 0;
+}
+.caseBoardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.caseBoardHeader h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+.caseCount {
+  min-width: 34px;
+  text-align: center;
+  color: var(--accent-color);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+.caseWidgetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.caseWidget {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+}
+.caseWidget.completed {
+  background: color-mix(in srgb, var(--bg-muted) 78%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--border-color) 82%, var(--danger-color));
+}
+.caseWidgetTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.caseNumber {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.caseClient {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+.caseStatusBadge {
+  flex: 0 0 auto;
+  color: var(--text-primary);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.caseStatusBadge.completed {
+  background: var(--danger-soft);
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+}
+.caseMetaGrid {
+  display: grid;
+  gap: 8px;
+}
+.caseMetaLabel {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.caseMetaValue {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.caseNotesPreview {
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.caseWidgetActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
 .ongoingCaseRow {
   padding: 0;
   margin-bottom: 8px;
@@ -876,13 +1204,53 @@ h3 {
 <div class="container">
 
 <div class="pages">
-  <div class="pageTab active" onclick="switchPage('templates')">Templates</div>
-  <div class="pageTab" onclick="switchPage('hr')">HR</div>
-  <div class="pageTab" onclick="switchPage('clients')">Clients</div>
-  <div class="pageTab" onclick="switchPage('cases')">Cases</div>
+  <div class="brandArea">
+    <a class="brandLogoLink" href="#" onclick="event.preventDefault(); switchPage('home')" aria-label="Blaise & Scott dashboard">
+      <img class="brandLogo" src="https://i.ibb.co/N2sHcmBP/logogolog.png" alt="Blaise & Scott">
+    </a>
+  </div>
+  <nav class="pageNav" aria-label="Primary navigation">
+    <div class="pageTab active" onclick="switchPage('home')">Home</div>
+    <div class="pageTab" onclick="switchPage('templates')">Templates</div>
+    <div class="pageTab" onclick="switchPage('hr')">HR</div>
+    <div class="pageTab" onclick="switchPage('clients')">Clients</div>
+    <div class="pageTab" onclick="switchPage('cases')">Cases</div>
+  </nav>
 </div>
 
-<div id="page_templates" class="pageCard">
+<div id="page_home" class="pageCard">
+  <div class="homeDashboard">
+    <div class="homePanel">
+      <img class="homeLogo" src="https://i.ibb.co/N2sHcmBP/logogolog.png" alt="Blaise & Scott">
+      <h1 class="homeTitle">Blaise & Scott Dashboard</h1>
+      <p class="homeSubtitle">Internal tools for case management, templates, clients, HR, and charge building.</p>
+      <div class="quickAccessGrid">
+        <button class="quickAccessCard" type="button" onclick="goDashboard('templates')">
+          <i data-lucide="layers"></i>
+          <span>Templates<small>Build and copy BBCode documents.</small></span>
+        </button>
+        <button class="quickAccessCard" type="button" onclick="goDashboard('hr')">
+          <i data-lucide="users"></i>
+          <span>HR<small>Manage personnel records and sections.</small></span>
+        </button>
+        <button class="quickAccessCard" type="button" onclick="goDashboard('clients')">
+          <i data-lucide="briefcase"></i>
+          <span>Clients<small>Track client details and notes.</small></span>
+        </button>
+        <button class="quickAccessCard" type="button" onclick="goDashboard('cases')">
+          <i data-lucide="folder-open"></i>
+          <span>Cases<small>Log case status, charges, and outcomes.</small></span>
+        </button>
+        <button class="quickAccessCard" type="button" onclick="goDashboard('charges')">
+          <i data-lucide="scale"></i>
+          <span>Charges / Penal Code Builder<small>Open the ongoing-cases charge workflow.</small></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page_templates" class="pageCard" style="display:none;">
 <div class="tabs">
   <div class="tab active" onclick="switchTab('builder')"><i data-lucide="wrench"></i>Builder</div>
   <div class="tab" onclick="switchTab('settings')"><i data-lucide="settings"></i>Settings</div>
@@ -982,10 +1350,11 @@ h3 {
       <div class="personnelDetailPanel">
         <div id="hr_detail_empty">Select a personnel file to manage sections.</div>
         <div id="hr_detail" class="hidden">
+          <div id="hr_profile" class="personnelProfile"></div>
           <div class="sectionTabs" id="hr_section_tabs"></div>
           <div class="sectionToolbar">
             <strong id="hr_section_title"></strong>
-            <button class="small" onclick="openHrRecordModal()"><i data-lucide="plus"></i>Add Record</button>
+            <button id="hr_section_add" class="small" onclick="openHrRecordModal()"><i data-lucide="plus"></i>Add Record</button>
           </div>
           <div id="hr_section_list" class="recordList"></div>
         </div>
@@ -1021,17 +1390,26 @@ h3 {
 
 <div id="page_cases" class="pageCard" style="display:none;">
   <div class="fieldsContainer">
-    <div class="sectionHeader"><i data-lucide="folder-open"></i>Cases</div>
-    <div class="recordGrid">
-      <div class="field"><label>Case Number</label><input id="case_number" placeholder="00-CM-0000"></div>
-      <div class="field"><label>Client</label><input id="case_client" placeholder="Client Name"></div>
-      <div class="field"><label>Charges</label><textarea id="case_charges" placeholder="Charge details..."></textarea></div>
-      <div class="field"><label>Status</label><input id="case_status" placeholder="Open / Closed / Pending"></div>
-      <div class="field"><label>Outcome</label><input id="case_outcome" placeholder="Outcome"></div>
-      <div class="field"><label>Notes</label><textarea id="case_notes" placeholder="Case notes..."></textarea></div>
+    <div class="casePageHeader">
+      <div class="sectionHeader"><i data-lucide="folder-open"></i>Cases</div>
+      <button onclick="openCaseModal()" class="small"><i data-lucide="plus"></i>New Case</button>
     </div>
-    <div class="buttonGroup"><button onclick="saveCaseRecord()"><i data-lucide="save"></i>Save Case</button></div>
-    <div id="case_list" class="recordList"></div>
+    <div class="caseBoards">
+      <section class="caseBoard">
+        <div class="caseBoardHeader">
+          <h3>Ongoing Cases</h3>
+          <span id="ongoing_case_count" class="caseCount">0</span>
+        </div>
+        <div id="ongoing_case_list" class="caseWidgetGrid"></div>
+      </section>
+      <section class="caseBoard">
+        <div class="caseBoardHeader">
+          <h3>Closed / Completed</h3>
+          <span id="completed_case_count" class="caseCount">0</span>
+        </div>
+        <div id="completed_case_list" class="caseWidgetGrid"></div>
+      </section>
+    </div>
   </div>
 </div>
 
@@ -1048,7 +1426,7 @@ h3 {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9FVAtjVAQZbahFRRA4gaCZD0XYLp46s8",
@@ -1065,9 +1443,13 @@ const db = getFirestore(app);
 
 let hrPersonnel = [];
 let selectedPersonnelId = '';
-let activeHrSection = 'basicInfo';
+let activeHrSection = 'strikes';
 let hrSectionRows = [];
-const ONGOING_CASE_STATUS_OPTIONS = ['Open', 'Closed'];
+let hrSectionUnsubscribe = null;
+let caseRows = [];
+let casesUnsubscribe = null;
+const CASE_STATUS_OPTIONS = ['Ongoing', 'Closed', 'Won', 'Lost', 'Plea', 'Dismissed'];
+const COMPLETED_CASE_STATUSES = ['Closed', 'Won', 'Lost', 'Plea', 'Dismissed'];
 let chargesList = [];
 
 async function loadPenalCodes() {
@@ -1134,13 +1516,27 @@ let exhibitCount = 0;
 
 function switchPage(page) {
   document.querySelectorAll('.pageTab').forEach(t => t.classList.remove('active'));
-  const order = ['templates', 'hr', 'clients', 'cases'];
-  document.querySelectorAll('.pageTab')[order.indexOf(page)].classList.add('active');
+  const order = ['home', 'templates', 'hr', 'clients', 'cases'];
+  const pageIndex = order.indexOf(page);
+  if (pageIndex < 0) return;
+  document.querySelectorAll('.pageTab')[pageIndex].classList.add('active');
   order.forEach(name => {
     const section = document.getElementById('page_' + name);
     section.style.display = name === page ? 'block' : 'none';
   });
   if (window.lucide) lucide.createIcons();
+}
+
+function goDashboard(target) {
+  if (target === 'charges') {
+    activeHrSection = 'ongoingCases';
+    switchPage('hr');
+    renderHrSections();
+    subscribeHrSection();
+    return;
+  }
+  switchPage(target);
+  if (target === 'templates') switchTab('builder');
 }
 
 function switchTab(tab) {
@@ -1518,16 +1914,18 @@ function deleteDraft(i){
 }
 
 const hrSections = {
-  basicInfo: { label: 'Basic Info', fields: ['title', 'email', 'address', 'emergencyContact', 'notes'] },
   strikes: { label: 'Strikes / Discipline', fields: ['strikeAmount', 'reason', 'issuedBy', 'date', 'notes', 'status'] },
-  caseHistory: { label: 'Case History', fields: ['caseNumber', 'roleOnCase', 'outcome', 'winLoss', 'dateClosed', 'notes'] },
-  ongoingCases: { label: 'Ongoing Cases', fields: ['caseNumber', 'client', 'charges', 'status', 'assignedAttorney', 'docketLink', 'notes'] },
+  caseHistory: { label: 'Case History', fields: [] },
+  ongoingCases: { label: 'Ongoing Cases', fields: [] },
   performanceReviews: { label: 'Performance Reviews', fields: ['reviewDate', 'reviewer', 'rating', 'strengths', 'issues', 'improvementNotes'] },
   trainingLogs: { label: 'Training Logs', fields: ['trainingName', 'trainer', 'date', 'passFail', 'notes'] }
 };
 
 function getRecords(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
 function setRecords(key, rows) { localStorage.setItem(key, JSON.stringify(rows)); }
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+}
 function renderRecordList(key, listId, formatter) {
   const list = document.getElementById(listId);
   const rows = getRecords(key);
@@ -1562,14 +1960,49 @@ function renderHrList() {
     list.appendChild(el);
   });
 }
+function getSelectedPersonnel() {
+  return hrPersonnel.find((row) => row.id === selectedPersonnelId) || {};
+}
 function selectPersonnel(id) { selectedPersonnelId = id; renderHrList(); renderHrSections(); subscribeHrSection(); }
 function getSectionCollectionRef() { return collection(db, 'personnel', selectedPersonnelId, activeHrSection); }
+function renderPersonnelProfile() {
+  const profile = document.getElementById('hr_profile');
+  const person = getSelectedPersonnel();
+  profile.innerHTML = `
+    <div class="personnelProfileHeader">
+      <div>
+        <h3 class="personnelProfileTitle">${escapeHtml(person.name || 'Unnamed Personnel File')}</h3>
+        <div class="personnelProfileRole">${escapeHtml(person.role || 'No role listed')}</div>
+      </div>
+      <button class="small" onclick="openPersonnelModal('${escapeHtml(selectedPersonnelId)}')"><i data-lucide="edit-3"></i>Edit</button>
+    </div>
+    <div class="personnelProfileGrid">
+      <div class="profileField">
+        <span class="profileLabel">Name</span>
+        <div class="profileValue">${escapeHtml(person.name || '-')}</div>
+      </div>
+      <div class="profileField">
+        <span class="profileLabel">Role</span>
+        <div class="profileValue">${escapeHtml(person.role || '-')}</div>
+      </div>
+      <div class="profileField">
+        <span class="profileLabel">Phone</span>
+        <div class="profileValue">${escapeHtml(person.phone || '-')}</div>
+      </div>
+      <div class="profileField full">
+        <span class="profileLabel">Notes</span>
+        <div class="profileValue">${escapeHtml(person.notes || '-')}</div>
+      </div>
+    </div>`;
+}
 function renderHrSections() {
   const tabs = document.getElementById('hr_section_tabs');
   const detail = document.getElementById('hr_detail');
   const empty = document.getElementById('hr_detail_empty');
   if (!selectedPersonnelId) { detail.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  if (!hrSections[activeHrSection]) activeHrSection = 'strikes';
   empty.classList.add('hidden'); detail.classList.remove('hidden');
+  renderPersonnelProfile();
   tabs.innerHTML = '';
   Object.entries(hrSections).forEach(([key, cfg]) => {
     const btn = document.createElement('button');
@@ -1579,46 +2012,21 @@ function renderHrSections() {
     tabs.appendChild(btn);
   });
   hr_section_title.textContent = hrSections[activeHrSection].label;
+  hr_section_add.innerHTML = activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory'
+    ? '<i data-lucide="plus"></i>Add Case'
+    : '<i data-lucide="plus"></i>Add Record';
 }
 function renderHrSectionList() {
   hr_section_list.innerHTML = '';
-  hrSectionRows.forEach((row) => {
-    if (activeHrSection === 'ongoingCases') {
-      const status = ONGOING_CASE_STATUS_OPTIONS.includes(row.status) ? row.status : 'Open';
-      const isOpen = status === 'Open';
-      const chargesText = formatChargeCounts(Array.isArray(row.charges) ? row.charges : []);
-      const docketMarkup = row.docketLink ? `<a href="${row.docketLink}" target="_blank" rel="noopener noreferrer">View Case</a>` : 'None';
-      const el = document.createElement('div');
-      el.className = 'recordItem ongoingCaseRow';
-      el.innerHTML = `
-        <div class="recordHeader">
-          <span class="ongoingCaseTitle">#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
-          <span class="ongoingCaseStatus">
-            <span class="statusDot" style="background:${isOpen ? 'var(--success-color)' : 'var(--danger-color)'};"></span>
-            <span>${status}</span>
-          </span>
-        </div>
-        <div class="recordMeta">
-          <div class="ongoingCaseDetails">
-            <div class="ongoingCaseDetailRow"><strong>Charges:</strong> ${chargesText}</div>
-            <div class="ongoingCaseDetailRow"><strong>Docket Link:</strong> ${docketMarkup}</div>
-            <div class="ongoingCaseDetailRow"><strong>Assigned Attorney:</strong> ${row.assignedAttorney || 'None'}</div>
-            <div class="ongoingCaseDetailRow"><strong>Notes:</strong> ${row.notes || 'None'}</div>
-          </div>
-          <div class="ongoingCaseFooter">
-            <div class="ongoingCaseActions">
-              <button type="button" class="small" onclick="event.stopPropagation(); openHrRecordModal('${row.id}')">Edit</button>
-              <button type="button" class="small danger" onclick="event.stopPropagation(); deleteHrSectionRecord('${row.id}')">Delete</button>
-            </div>
-          </div>
-        </div>`;
-      el.addEventListener('click', (event) => {
-        if (event.target.closest('button, a')) return;
-        el.classList.toggle('expanded');
-      });
-      hr_section_list.appendChild(el);
+  if (activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory') {
+    if (!hrSectionRows.length) {
+      hr_section_list.innerHTML = '<div class="recordMeta">No cases found for this personnel file.</div>';
       return;
     }
+    hrSectionRows.forEach((row) => hr_section_list.appendChild(createCaseWidget(row, { compact: true })));
+    return;
+  }
+  hrSectionRows.forEach((row) => {
     const title = row.caseNumber || row.trainingName || row.reviewer || row.reason || row.title || row.date || 'Record';
     const meta = Object.entries(row).filter(([k]) => !['id', 'createdAt', 'updatedAt'].includes(k)).map(([k,v]) => `${k}: ${v || 'None'}`).join('\n');
     const el = document.createElement('div');
@@ -1629,10 +2037,27 @@ function renderHrSectionList() {
 }
 function subscribeHrSection() {
   if (!selectedPersonnelId) return;
-  onSnapshot(getSectionCollectionRef(), (snapshot) => { hrSectionRows = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderHrSectionList(); });
+  if (hrSectionUnsubscribe) hrSectionUnsubscribe();
+  let ref = getSectionCollectionRef();
+  if (activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory') {
+    ref = query(collection(db, 'cases'), where('assignedLawyerId', '==', selectedPersonnelId));
+  }
+  hrSectionUnsubscribe = onSnapshot(ref, (snapshot) => {
+    hrSectionRows = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (activeHrSection === 'ongoingCases') hrSectionRows = hrSectionRows.filter((row) => row.status === 'Ongoing');
+    if (activeHrSection === 'caseHistory') hrSectionRows = hrSectionRows.filter((row) => COMPLETED_CASE_STATUSES.includes(row.status));
+    hrSectionRows = sortCases(hrSectionRows);
+    renderHrSectionList();
+  });
 }
 
-async function deleteHrSectionRecord(id) { await deleteDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id)); }
+async function deleteHrSectionRecord(id) {
+  if (activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory') {
+    await deleteCase(id);
+    return;
+  }
+  await deleteDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id));
+}
 
 async function deleteHrRecord(id) {
   await deleteDoc(doc(db, 'personnel', id));
@@ -1663,7 +2088,8 @@ async function submitModal() {
   if (!modalState) return;
   const payload = {};
   modalState.fields.forEach((field) => { payload[field.key] = (document.getElementById(`modal_${field.key}`)?.value || '').trim(); });
-  await modalState.onSubmit(payload);
+  const result = await modalState.onSubmit(payload);
+  if (result === false) return;
   closeModal();
 }
 function openPersonnelModal(id = '') {
@@ -1674,126 +2100,212 @@ function openPersonnelModal(id = '') {
     else await addDoc(collection(db, 'personnel'), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
   });
 }
+function sortCases(rows = []) {
+  return [...rows].sort((a, b) => {
+    const aTime = a.updatedAt?.seconds || a.createdAt?.seconds || 0;
+    const bTime = b.updatedAt?.seconds || b.createdAt?.seconds || 0;
+    return bTime - aTime;
+  });
+}
+function getAssignedLawyerName(id) {
+  return hrPersonnel.find((person) => person.id === id)?.name || '';
+}
+function setupChargeSelector(chargeSelections) {
+  const search = document.getElementById('modal_chargeSearch');
+  const modifiersContainer = document.getElementById('modal_charge_modifiers');
+  const optionsContainer = document.getElementById('modal_charges_options');
+  const selectedContainer = document.getElementById('modal_selected_charges');
+  const modifierOptions = [
+    { id: 'accessory', label: 'Accessory to a Crime' },
+    { id: 'attempt', label: 'Attempt of a Crime' },
+    { id: 'aggravated', label: 'Aggravated Crime' },
+    { id: 'govEmployee', label: 'Crime against a Government Employee' }
+  ];
+  const activeModifiers = new Set();
+  const isSelected = (code) => chargeSelections.some((charge) => (typeof charge === 'string' ? charge : charge.code) === code);
+  const renderSelectedCharges = () => {
+    const entries = Object.values(buildChargeCounts(chargeSelections));
+    selectedContainer.innerHTML = entries.length ? entries.map(({ charge, count }) => {
+      const key = chargeSelectionKey(charge);
+      return `
+        <div class="selectedChargeItem">
+          <span class="selectedChargeText">${escapeHtml(formatChargeSelection(charge))}${count > 1 ? ` (x${count})` : ''}</span>
+          <button type="button" class="small danger" data-charge-remove="${escapeHtml(key)}">Remove</button>
+        </div>`;
+    }).join('') : '<div class="recordMeta">No charges selected.</div>';
+    selectedContainer.querySelectorAll('[data-charge-remove]').forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const key = btn.getAttribute('data-charge-remove');
+        const idx = chargeSelections.map(chargeSelectionKey).lastIndexOf(key);
+        if (idx >= 0) chargeSelections.splice(idx, 1);
+        renderChargeOptions();
+        renderSelectedCharges();
+      });
+    });
+  };
+  const renderChargeOptions = () => {
+    const q = search.value.trim().toLowerCase();
+    const grouped = {};
+    chargesList.filter((charge) => `${charge.code} ${charge.name}`.toLowerCase().includes(q)).forEach((charge) => {
+      const category = getChargeCategory(charge.code);
+      if (!grouped[category]) grouped[category] = [];
+      grouped[category].push(charge);
+    });
+    optionsContainer.innerHTML = Object.entries(grouped).map(([category, items]) => `
+      <div class="chargeGroup">
+        <div class="chargeGroupHeader">${escapeHtml(category)}</div>
+        ${items.map((charge) => `
+          <button type="button" class="chargeOption ${isSelected(charge.code) ? 'active' : ''}" data-charge-code="${escapeHtml(charge.code)}">
+            <span class="chargeCode">${escapeHtml(charge.code)}</span>
+            <span class="chargeName">${escapeHtml(charge.name)}</span>
+            <i data-lucide="check" class="chargeCheck"></i>
+          </button>
+        `).join('')}
+      </div>
+    `).join('') || '<div class="recordMeta">No charges found.</div>';
+    optionsContainer.querySelectorAll('[data-charge-code]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        chargeSelections.push({ code: btn.getAttribute('data-charge-code'), modifiers: [...activeModifiers] });
+        renderChargeOptions();
+        renderSelectedCharges();
+        if (window.lucide?.createIcons) lucide.createIcons();
+      });
+    });
+    if (window.lucide?.createIcons) lucide.createIcons();
+  };
+  const renderModifiers = () => {
+    modifiersContainer.innerHTML = modifierOptions.map((modifier) => `
+      <button type="button" class="chargeModifier ${activeModifiers.has(modifier.id) ? 'active' : ''}" data-modifier-id="${modifier.id}">${escapeHtml(modifier.label)}</button>
+    `).join('');
+    modifiersContainer.querySelectorAll('[data-modifier-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-modifier-id');
+        if (activeModifiers.has(id)) activeModifiers.delete(id);
+        else activeModifiers.add(id);
+        renderModifiers();
+      });
+    });
+  };
+  search.addEventListener('input', renderChargeOptions);
+  renderModifiers();
+  renderChargeOptions();
+  renderSelectedCharges();
+}
+function openCaseModal(id = '', preselectedLawyerId = '', defaultStatus = 'Ongoing') {
+  const current = caseRows.find((row) => row.id === id) || hrSectionRows.find((row) => row.id === id) || {};
+  const assignedId = current.assignedLawyerId || preselectedLawyerId || '';
+  const chargeSelections = Array.isArray(current.charges) ? [...current.charges] : [];
+  modalState = {
+    fields: [],
+    onSubmit: async () => {
+      const assignedLawyerId = document.getElementById('modal_assignedLawyerId').value;
+      if (!assignedLawyerId) {
+        alert('Please select an assigned lawyer.');
+        return false;
+      }
+      const payload = {
+        caseNumber: (document.getElementById('modal_caseNumber').value || '').trim(),
+        clientName: (document.getElementById('modal_clientName').value || '').trim(),
+        assignedLawyerId,
+        assignedLawyerName: getAssignedLawyerName(assignedLawyerId),
+        charges: [...chargeSelections],
+        status: document.getElementById('modal_status').value || defaultStatus,
+        outcome: (document.getElementById('modal_outcome').value || '').trim(),
+        notes: (document.getElementById('modal_notes').value || '').trim(),
+        updatedAt: serverTimestamp()
+      };
+      if (id) await updateDoc(doc(db, 'cases', id), payload);
+      else await addDoc(collection(db, 'cases'), { ...payload, createdAt: serverTimestamp() });
+    }
+  };
+  modal_title.textContent = id ? 'Edit Case' : 'New Case';
+  modal_fields.innerHTML = `
+    <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${escapeHtml(current.caseNumber || '')}" placeholder="00-CM-0000"></div>
+    <div class="field"><label>Client Name</label><input id="modal_clientName" value="${escapeHtml(current.clientName || current.client || '')}" placeholder="Client Name"></div>
+    <div class="field"><label>Assigned Lawyer</label><select id="modal_assignedLawyerId"><option value="">Select lawyer</option>${hrPersonnel.map((person) => `<option value="${escapeHtml(person.id)}" ${assignedId === person.id ? 'selected' : ''}>${escapeHtml(person.name || 'Unnamed Personnel File')}</option>`).join('')}</select></div>
+    <div class="field"><label>Status</label><select id="modal_status">${CASE_STATUS_OPTIONS.map((status) => `<option value="${status}" ${(current.status || defaultStatus) === status ? 'selected' : ''}>${status}</option>`).join('')}</select></div>
+    <div class="field"><label>Charges</label><div class="chargeSelector"><div id="modal_charge_modifiers" class="chargeModifiers"></div><input id="modal_chargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="modal_charges_options" class="chargeList"></div><div id="modal_selected_charges" class="selectedChargeList"></div></div></div>
+    <div class="field"><label>Outcome</label><input id="modal_outcome" value="${escapeHtml(current.outcome || '')}" placeholder="Outcome"></div>
+    <div class="field"><label>Notes</label><textarea id="modal_notes" placeholder="Case notes...">${escapeHtml(current.notes || '')}</textarea></div>
+  `;
+  modal_backdrop.classList.remove('hidden');
+  setupChargeSelector(chargeSelections);
+  if (window.lucide?.createIcons) lucide.createIcons();
+}
 function openHrRecordModal(id = '') {
   if (!selectedPersonnelId) return;
   const current = hrSectionRows.find(r => r.id === id) || {};
-  if (activeHrSection === 'ongoingCases') {
-    const attorneys = hrPersonnel.map(p => p.name).filter(Boolean);
-    const chargeSelections = Array.isArray(current.charges) ? [...current.charges] : [];
-    modalState = {
-      fields: [],
-      onSubmit: async () => {
-        const payload = {
-          caseNumber: (document.getElementById('modal_caseNumber').value || '').trim(),
-          client: (document.getElementById('modal_client').value || '').trim(),
-          charges: [...chargeSelections],
-          status: document.getElementById('modal_status').value || 'Open',
-          assignedAttorney: document.getElementById('modal_assignedAttorney').value || '',
-          docketLink: (document.getElementById('modal_docketLink').value || '').trim(),
-          notes: (document.getElementById('modal_notes').value || '').trim()
-        };
-        if (id) await updateDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id), { ...payload, updatedAt: serverTimestamp() });
-        else await addDoc(collection(db, 'personnel', selectedPersonnelId, activeHrSection), { ...payload, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
-      }
-    };
-    modal_title.textContent = `${id ? 'Edit' : 'Add'} ${hrSections[activeHrSection].label} Record`;
-    modal_fields.innerHTML = `
-      <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${current.caseNumber || ''}" placeholder="26-CM-0005"></div>
-      <div class="field"><label>Client</label><input id="modal_client" value="${current.client || ''}" placeholder="Client Name"></div>
-      <div class="field"><label>Charges</label><div class="chargeSelector"><div id="modal_charge_modifiers" class="chargeModifiers"></div><input id="modal_chargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="modal_charges_options" class="chargeList"></div><div id="modal_selected_charges" class="selectedChargeList"></div></div></div>
-      <div class="field"><label>Status</label><select id="modal_status">${ONGOING_CASE_STATUS_OPTIONS.map(status => `<option value="${status}" ${current.status === status ? 'selected' : ''}>${status}</option>`).join('')}</select></div>
-      <div class="field"><label>Assigned Attorney</label><select id="modal_assignedAttorney"><option value="">Select attorney</option>${attorneys.map(name => `<option value="${name}" ${current.assignedAttorney === name ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
-      <div class="field"><label>Docket Link</label><input id="modal_docketLink" value="${current.docketLink || ''}" placeholder="https://..."></div>
-      <div class="field"><label>Notes</label><textarea id="modal_notes" placeholder="Notes">${current.notes || ''}</textarea></div>
-    `;
-    modal_backdrop.classList.remove('hidden');
-    const search = document.getElementById('modal_chargeSearch');
-    const modifiersContainer = document.getElementById('modal_charge_modifiers');
-    const optionsContainer = document.getElementById('modal_charges_options');
-    const selectedContainer = document.getElementById('modal_selected_charges');
-    const modifierOptions = [
-      { id: 'accessory', label: 'Accessory to a Crime' },
-      { id: 'attempt', label: 'Attempt of a Crime' },
-      { id: 'aggravated', label: 'Aggravated Crime' },
-      { id: 'govEmployee', label: 'Crime against a Government Employee' }
-    ];
-    const activeModifiers = new Set();
-    const renderSelectedCharges = () => {
-      const entries = Object.values(buildChargeCounts(chargeSelections));
-      selectedContainer.innerHTML = entries.length ? entries.map(({ charge, count }) => {
-        const key = chargeSelectionKey(charge);
-        return `
-        <div class="selectedChargeItem">
-          <span class="selectedChargeText">${formatChargeSelection(charge)}${count > 1 ? ` (x${count})` : ''}</span>
-          <button class="small danger" data-charge-remove="${key}">Remove</button>
-        </div>
-      `;
-      }).join('') : '<div class="recordMeta">None</div>';
-      selectedContainer.querySelectorAll('[data-charge-remove]').forEach((btn) => {
-        btn.addEventListener('click', (event) => {
-          event.stopPropagation();
-          const key = btn.getAttribute('data-charge-remove');
-          const idx = chargeSelections.map(chargeSelectionKey).lastIndexOf(key);
-          if (idx >= 0) chargeSelections.splice(idx, 1);
-          renderChargeOptions();
-          renderSelectedCharges();
-        });
-      });
-    };
-    const renderChargeOptions = () => {
-      const q = search.value.trim().toLowerCase();
-      const grouped = {};
-      chargesList.filter((charge) => `${charge.code} ${charge.name}`.toLowerCase().includes(q)).forEach((charge) => {
-        const category = getChargeCategory(charge.code);
-        if (!grouped[category]) grouped[category] = [];
-        grouped[category].push(charge);
-      });
-      optionsContainer.innerHTML = Object.entries(grouped).map(([category, items]) => `
-        <div class="chargeGroup">
-          <div class="chargeGroupHeader">${category}</div>
-          ${items.map((charge) => `
-            <button type="button" class="chargeOption ${chargeSelections.includes(charge.code) ? 'active' : ''}" data-charge-code="${charge.code}">
-              <span class="chargeCode">${charge.code}</span>
-              <span class="chargeName">${charge.name}</span>
-              <i data-lucide="check" class="chargeCheck"></i>
-            </button>
-          `).join('')}
-        </div>
-      `).join('') || '<div class="recordMeta">No charges found.</div>';
-      optionsContainer.querySelectorAll('[data-charge-code]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          chargeSelections.push({ code: btn.getAttribute('data-charge-code'), modifiers: [...activeModifiers] });
-          renderChargeOptions();
-          renderSelectedCharges();
-          if (window.lucide?.createIcons) lucide.createIcons();
-        });
-      });
-      if (window.lucide?.createIcons) lucide.createIcons();
-    };
-
-    const renderModifiers = () => {
-      modifiersContainer.innerHTML = modifierOptions.map((modifier) => `
-        <button type="button" class="chargeModifier ${activeModifiers.has(modifier.id) ? 'active' : ''}" data-modifier-id="${modifier.id}">${modifier.label}</button>
-      `).join('');
-      modifiersContainer.querySelectorAll('[data-modifier-id]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-modifier-id');
-          if (activeModifiers.has(id)) activeModifiers.delete(id);
-          else activeModifiers.add(id);
-          renderModifiers();
-        });
-      });
-    };
-    search.addEventListener('input', renderChargeOptions);
-    renderModifiers();
-    renderChargeOptions();
-    renderSelectedCharges();
+  if (activeHrSection === 'ongoingCases' || activeHrSection === 'caseHistory') {
+    openCaseModal(id, selectedPersonnelId, activeHrSection === 'caseHistory' ? 'Closed' : 'Ongoing');
     return;
   }
   const fields = hrSections[activeHrSection].fields.map(key => ({ key, label: key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()) }));
   openModal(`${id ? 'Edit' : 'Add'} ${hrSections[activeHrSection].label} Record`, fields, current, async (data) => {
     if (id) await updateDoc(doc(db, 'personnel', selectedPersonnelId, activeHrSection, id), { ...data, updatedAt: serverTimestamp() });
     else await addDoc(collection(db, 'personnel', selectedPersonnelId, activeHrSection), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+  });
+}
+function createCaseWidget(row, options = {}) {
+  const isCompleted = COMPLETED_CASE_STATUSES.includes(row.status);
+  const chargesText = formatChargeCounts(Array.isArray(row.charges) ? row.charges : []);
+  const el = document.createElement('article');
+  el.className = `caseWidget ${isCompleted ? 'completed' : ''}`;
+  el.innerHTML = `
+    <div class="caseWidgetTop">
+      <div>
+        <div class="caseNumber">#${escapeHtml(row.caseNumber || 'None')}</div>
+        <div class="caseClient">${escapeHtml(row.clientName || row.client || 'No client listed')}</div>
+      </div>
+      <span class="caseStatusBadge ${isCompleted ? 'completed' : ''}">${escapeHtml(row.status || 'Ongoing')}</span>
+    </div>
+    <div class="caseMetaGrid">
+      <div>
+        <span class="caseMetaLabel">Assigned Lawyer</span>
+        <div class="caseMetaValue">${escapeHtml(row.assignedLawyerName || getAssignedLawyerName(row.assignedLawyerId) || '-')}</div>
+      </div>
+      <div>
+        <span class="caseMetaLabel">Charges</span>
+        <div class="caseMetaValue">${escapeHtml(chargesText)}</div>
+      </div>
+      ${row.outcome ? `<div><span class="caseMetaLabel">Outcome</span><div class="caseMetaValue">${escapeHtml(row.outcome)}</div></div>` : ''}
+      <div>
+        <span class="caseMetaLabel">Notes</span>
+        <div class="caseMetaValue caseNotesPreview">${escapeHtml(row.notes || '-')}</div>
+      </div>
+    </div>
+    <div class="caseWidgetActions">
+      <button type="button" class="small" data-case-edit="${escapeHtml(row.id)}"><i data-lucide="edit-3"></i>Edit</button>
+      <button type="button" class="small danger" data-case-delete="${escapeHtml(row.id)}"><i data-lucide="trash-2"></i>Delete</button>
+    </div>`;
+  el.querySelector('[data-case-edit]').addEventListener('click', () => openCaseModal(row.id, options.preselectedLawyerId || ''));
+  el.querySelector('[data-case-delete]').addEventListener('click', () => deleteCase(row.id));
+  return el;
+}
+function renderCasesPage() {
+  const ongoing = sortCases(caseRows.filter((row) => row.status === 'Ongoing'));
+  const completed = sortCases(caseRows.filter((row) => COMPLETED_CASE_STATUSES.includes(row.status)));
+  const ongoingList = document.getElementById('ongoing_case_list');
+  const completedList = document.getElementById('completed_case_list');
+  ongoing_case_count.textContent = ongoing.length;
+  completed_case_count.textContent = completed.length;
+  ongoingList.innerHTML = '';
+  completedList.innerHTML = '';
+  if (!ongoing.length) ongoingList.innerHTML = '<div class="recordMeta">No ongoing cases yet.</div>';
+  else ongoing.forEach((row) => ongoingList.appendChild(createCaseWidget(row)));
+  if (!completed.length) completedList.innerHTML = '<div class="recordMeta">No closed or completed cases yet.</div>';
+  else completed.forEach((row) => completedList.appendChild(createCaseWidget(row)));
+  if (window.lucide?.createIcons) lucide.createIcons();
+}
+async function deleteCase(id) {
+  if (!confirm('Delete this case?')) return;
+  await deleteDoc(doc(db, 'cases', id));
+}
+function subscribeCases() {
+  if (casesUnsubscribe) casesUnsubscribe();
+  casesUnsubscribe = onSnapshot(collection(db, 'cases'), (snapshot) => {
+    caseRows = sortCases(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+    renderCasesPage();
   });
 }
 
@@ -1803,6 +2315,7 @@ function subscribePersonnel() {
     if (!selectedPersonnelId && hrPersonnel.length) selectedPersonnelId = hrPersonnel[0].id;
     renderHrList();
     renderHrSections();
+    subscribeHrSection();
   });
 }
 
@@ -1819,12 +2332,6 @@ function saveClientRecord() {
   rows.push({ name: client_name.value.trim(), phone: client_phone.value.trim(), activeCases: client_active_cases.value.trim(), notes: client_notes.value.trim() });
   setRecords('clientRecords', rows);
   renderRecordList('clientRecords', 'client_list', formatters.client);
-}
-function saveCaseRecord() {
-  const rows = getRecords('caseRecords');
-  rows.push({ caseNumber: case_number.value.trim(), client: case_client.value.trim(), charges: case_charges.value.trim(), status: case_status.value.trim(), outcome: case_outcome.value.trim(), notes: case_notes.value.trim() });
-  setRecords('caseRecords', rows);
-  renderRecordList('caseRecords', 'case_list', formatters.case);
 }
 
 function clearForm(){
@@ -1863,15 +2370,17 @@ addExhibit();
 setTemplate('outreach');
 loadDrafts();
 subscribePersonnel();
+subscribeCases();
 renderRecordList('clientRecords', 'client_list', formatters.client);
-renderRecordList('caseRecords', 'case_list', formatters.case);
 if (window.lucide) lucide.createIcons();
 generate();
 
 window.deleteHrRecord = deleteHrRecord;
 Object.assign(window, {
+  goDashboard,
   openPersonnelModal,
   openHrRecordModal,
+  openCaseModal,
   closeModal,
   submitModal,
   switchPage,
@@ -1883,7 +2392,6 @@ Object.assign(window, {
   copyOutput,
   saveSettings,
   saveClientRecord,
-  saveCaseRecord,
   loadDraft,
   deleteDraft,
   deleteRecord,
