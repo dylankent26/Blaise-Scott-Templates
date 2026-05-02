@@ -19,6 +19,35 @@ body {
   margin: 0 auto;
   padding: 20px;
 }
+ .pages {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1f2a3a;
+}
+.pageTab {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid #2a3a4a;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #a0a8c4;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.pageTab:hover {
+  background: #1f2a3a;
+  color: #e0e6ff;
+}
+.pageTab.active {
+  background: linear-gradient(135deg, #4f7cff, #6a8cff);
+  border-color: #4f7cff;
+  color: #fff;
+}
+.pageCard {
+  animation: fadeIn 0.4s ease-out;
+}
 .tabs {
   display: flex;
   gap: 12px;
@@ -518,10 +547,12 @@ button.small i {
   .builderGrid {
     grid-template-columns: 1fr;
   }
+  .pages,
   .tabs {
     flex-wrap: wrap;
   }
 }
+
 [data-lucide] {
   width: 18px;
   height: 18px;
@@ -550,6 +581,14 @@ select option {
 <body>
 <div class="container">
 
+<div class="pages">
+  <div class="pageTab active" onclick="switchPage('templates')">Templates</div>
+  <div class="pageTab" onclick="switchPage('hr')">HR</div>
+  <div class="pageTab" onclick="switchPage('clients')">Clients</div>
+  <div class="pageTab" onclick="switchPage('cases')">Cases</div>
+</div>
+
+<div id="page_templates" class="pageCard">
 <div class="tabs">
   <div class="tab active" onclick="switchTab('builder')"><i data-lucide="wrench"></i>Builder</div>
   <div class="tab" onclick="switchTab('settings')"><i data-lucide="settings"></i>Settings</div>
@@ -633,6 +672,29 @@ select option {
   <div id="draftList"></div>
 </div>
 
+</div>
+
+<div id="page_hr" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div class="sectionHeader"><i data-lucide="users"></i>HR</div>
+    <p>HR page placeholder for onboarding templates and staff resources.</p>
+  </div>
+</div>
+
+<div id="page_clients" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div class="sectionHeader"><i data-lucide="briefcase"></i>Clients</div>
+    <p>Clients page placeholder for client records and communication.</p>
+  </div>
+</div>
+
+<div id="page_cases" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div class="sectionHeader"><i data-lucide="folder-open"></i>Cases</div>
+    <p>Cases page placeholder for case tracking and matter details.</p>
+  </div>
+</div>
+
 <div id="datePicker" class="datePicker hidden">
   <div class="datePickerHeader">
     <button type="button" id="prevMonth">‹</button>
@@ -647,6 +709,17 @@ select option {
 <script>
 let currentTemplate = 'outreach';
 let exhibitCount = 0;
+
+function switchPage(page) {
+  document.querySelectorAll('.pageTab').forEach(t => t.classList.remove('active'));
+  const order = ['templates', 'hr', 'clients', 'cases'];
+  document.querySelectorAll('.pageTab')[order.indexOf(page)].classList.add('active');
+  order.forEach(name => {
+    const section = document.getElementById('page_' + name);
+    section.style.display = name === page ? 'block' : 'none';
+  });
+  if (window.lucide) lucide.createIcons();
+}
 
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
