@@ -8,26 +8,30 @@
 <style>
 :root {
   --bg-main: #0c1424;
-  --bg-card: #162033;
-  --border-color: #2a3448;
+  --bg-card: #172235;
+  --bg-sidebar: #141f32;
+  --bg-panel: #1a2740;
+  --border-color: #2b374d;
   --text-primary: #eef1f7;
-  --text-secondary: #9ca7b8;
-  --accent-color: #b89a5f;
-  --danger-color: #c96b72;
+  --text-secondary: #8d99ac;
+  --accent-color: #b4955a;
+  --accent-bright: #c2a56a;
+  --danger-color: #ba6770;
   --success-color: #78b88a;
-  --bg-elevated: #1b2740;
-  --bg-muted: #111a2b;
+  --bg-elevated: #1e2c44;
+  --bg-muted: #121b2d;
   --accent-soft: rgba(184, 154, 95, 0.16);
-  --accent-border: rgba(184, 154, 95, 0.5);
-  --accent-glow: rgba(184, 154, 95, 0.2);
-  --danger-soft: rgba(201, 107, 114, 0.2);
-  --danger-border: rgba(201, 107, 114, 0.45);
+  --accent-border: rgba(184, 154, 95, 0.4);
+  --accent-glow: rgba(184, 154, 95, 0.18);
+  --danger-soft: rgba(186, 103, 112, 0.18);
+  --danger-border: rgba(186, 103, 112, 0.38);
   --danger-text: #f1c4c9;
 
-  --border-strong: #3a455a;
+  --border-strong: #37465e;
   --overlay: rgba(0, 0, 0, 0.55);
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.28);
+  --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.02);
   --shadow-accent: 0 8px 30px rgba(7, 11, 20, 0.55);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.02), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 
@@ -157,12 +161,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: var(--bg-card);
+  background: var(--bg-sidebar);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
   height: fit-content;
   box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
   transition: all 0.3s ease;
 }
 .templateList:hover {
@@ -213,7 +218,7 @@ body {
   color: var(--accent-color);
 }
 .templateList button.selected {
-  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 88%, white));
   color: var(--text-primary);
   border: 1px solid rgba(230, 235, 247, 0.16);
   box-shadow: 0 8px 24px var(--accent-glow);
@@ -280,13 +285,13 @@ textarea {
 }
 .fieldsContainer {
   width: 100%;
-  background: var(--bg-card);
+  background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
   box-sizing: border-box;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
   transition: all 0.3s ease;
   animation: slideUp 0.5s ease-out 0.1s both;
 }
@@ -312,13 +317,13 @@ textarea {
 }
 .outputContainer {
   width: 100%;
-  background: var(--bg-card);
+  background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   margin-top: 30px;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
   animation: slideUp 0.5s ease-out 0.15s both;
   transition: all 0.3s ease;
 }
@@ -332,7 +337,7 @@ textarea {
   justify-content: space-between;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
+  color: color-mix(in srgb, var(--accent-color) 55%, var(--text-primary));
   font-weight: 700;
   font-size: 0.95rem;
   text-transform: uppercase;
@@ -344,7 +349,7 @@ textarea {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  color: var(--accent-color);
+  color: color-mix(in srgb, var(--accent-color) 70%, var(--text-primary));
   font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -391,9 +396,9 @@ button:active::before {
   height: 300px;
 }
 button:hover {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 85%, white), color-mix(in srgb, var(--accent-color) 72%, white));
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.36);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 90%, white), color-mix(in srgb, var(--accent-color) 78%, white));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
 }
 button:active {
   transform: translateY(-1px);
@@ -407,14 +412,15 @@ button:hover i {
   transform: scale(1.15);
 }
 button.small {
-  background: var(--border-color);
+  background: color-mix(in srgb, var(--bg-main) 55%, var(--bg-card));
   color: var(--text-primary);
+  border: 1px solid var(--border-color);
   height: auto;
   padding: 9px 14px;
   font-size: 0.9rem;
 }
 button.small:hover {
-  background: var(--border-color);
+  background: color-mix(in srgb, var(--bg-main) 45%, var(--bg-card));
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
 }
@@ -423,7 +429,7 @@ button.small i {
   height: 16px;
 }
 #copyButton, #copyButtonHeader {
-  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 85%, white));
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 88%, var(--accent-bright)));
   box-shadow: 0 0 20px var(--accent-glow);
 }
 #copyButton:hover, #copyButtonHeader:hover {
@@ -677,7 +683,7 @@ select option {
   color: var(--danger-text);
 }
 .ongoingCaseActions .danger:hover {
-  background: rgba(201, 107, 114, 0.32);
+  background: rgba(186, 103, 112, 0.28);
   box-shadow: 0 6px 16px rgba(201, 107, 114, 0.2);
 }
 .ongoingCaseRow:hover {
@@ -789,7 +795,7 @@ select option {
 }
 .chargeOption.active {
   background: var(--accent-soft);
-  border-color: rgba(184, 154, 95, 0.5);
+  border-color: var(--accent-border);
   color: var(--text-primary);
 }
 .chargeCode, .chargeName {
@@ -845,6 +851,24 @@ select option {
 .modalBackdrop.hidden { display: none; }
 .modalCard { width: min(760px, 92vw); max-height: 88vh; overflow:auto; background:var(--bg-card); border:1px solid var(--border-color); border-radius: 14px; padding: 18px; }
 .modalActions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 14px; }
+.personnelListPanel, .personnelDetailPanel, .modalCard, .recordItem, .exhibitBox, .chargeList {
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+}
+.recordItem,
+.personnelCard,
+.exhibitBox,
+.chargeList,
+.modalCard,
+.personnelListPanel,
+.personnelDetailPanel,
+.fieldsContainer,
+.templateList,
+.outputContainer {
+  border-color: color-mix(in srgb, var(--border-color) 86%, transparent);
+}
+h3 {
+  color: color-mix(in srgb, var(--accent-color) 25%, var(--text-primary));
+}
 
 </style>
 </head>
