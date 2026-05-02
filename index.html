@@ -591,38 +591,39 @@ select option {
 .recordMeta { color:#a0a8c4; font-size: .9rem; white-space: pre-wrap; }
 .ongoingCaseRow {
   padding: 0;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
   transform-origin: center;
 }
 .ongoingCaseRow .recordHeader {
   width: 100%;
-  padding: 12px;
+  padding: 11px 12px;
   margin-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
+  gap: 10px;
 }
 .ongoingCaseRow .recordMeta {
-  padding: 10px 12px 12px;
-  line-height: 1.45;
+  padding: 8px 12px 10px;
+  line-height: 1.4;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .ongoingCaseDetails {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 .ongoingCaseDetailRow {
   color: #a0a8c4;
 }
 .ongoingCaseFooter {
-  margin-top: 6px;
-  padding-top: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
   border-top: 1px solid #1f2a3a;
   display: flex;
   justify-content: flex-end;
@@ -645,10 +646,118 @@ select option {
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
 }
 .ongoingCaseRow:hover {
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-2px) scale(1.008);
   border-color: #2a3a4a;
   background: #0f1419;
   box-shadow: 0 10px 24px rgba(79, 124, 255, 0.12);
+}
+.ongoingCaseTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ongoingCaseStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.statusDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.chargeSelector {
+  margin-top: 8px;
+}
+.chargeSearch {
+  margin-bottom: 8px;
+}
+.chargeList {
+  max-height: 280px;
+  overflow: auto;
+  border: 1px solid #1a2530;
+  border-radius: 10px;
+  padding: 8px;
+  background: #0a1016;
+}
+.chargeGroup {
+  margin-bottom: 10px;
+}
+.chargeGroup:last-child {
+  margin-bottom: 0;
+}
+.chargeGroupHeader {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 2px 0 6px;
+}
+.chargeOption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+.chargeOption:hover {
+  background: rgba(79, 124, 255, 0.1);
+  border-color: rgba(79, 124, 255, 0.3);
+}
+.chargeOption.active {
+  background: rgba(79, 124, 255, 0.18);
+  border-color: rgba(79, 124, 255, 0.38);
+}
+.chargeCode, .chargeName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chargeCode {
+  width: 70px;
+  flex-shrink: 0;
+  color: #93c5fd;
+  font-weight: 600;
+}
+.chargeName {
+  flex: 1;
+}
+.chargeCheck {
+  opacity: 0;
+  color: #60a5fa;
+}
+.chargeOption.active .chargeCheck {
+  opacity: 1;
+}
+.selectedChargeList {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+.selectedChargeItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #101a26;
+  border: 1px solid #1f2a3a;
+}
+.selectedChargeText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .personnelLayout { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
 .personnelListPanel, .personnelDetailPanel { border: 1px solid #1f2a3a; border-radius: 12px; background: #0a1016; padding: 14px; }
@@ -881,6 +990,22 @@ async function loadPenalCodes() {
 function formatCharge(chargeCode) {
   const match = chargesList.find(c => c.code === chargeCode);
   return match ? `${match.code} - ${match.name}` : chargeCode;
+}
+function getChargeCategory(code = '') {
+  const prefix = (code.match(/^[A-Za-z]+/)?.[0] || 'OTHER').toUpperCase();
+  const labels = { VC: 'VEHICLE CODE (VC)', GM: 'GENERAL MISDEMEANOR (GM)', WM: 'WEAPON (WM)' };
+  return labels[prefix] || `${prefix} CHARGES (${prefix})`;
+}
+function buildChargeCounts(charges = []) {
+  return charges.reduce((acc, code) => {
+    acc[code] = (acc[code] || 0) + 1;
+    return acc;
+  }, {});
+}
+function formatChargeCounts(charges = []) {
+  const entries = Object.entries(buildChargeCounts(charges));
+  if (!entries.length) return 'None';
+  return entries.map(([code, count]) => `${formatCharge(code)}${count > 1 ? ` (x${count})` : ''}`).join(', ');
 }
 let modalState = null;
 let currentTemplate = 'outreach';
@@ -1340,22 +1465,22 @@ function renderHrSectionList() {
     if (activeHrSection === 'ongoingCases') {
       const status = ONGOING_CASE_STATUS_OPTIONS.includes(row.status) ? row.status : 'Open';
       const isOpen = status === 'Open';
-      const chargesText = (Array.isArray(row.charges) && row.charges.length) ? row.charges.map(formatCharge).join(', ') : 'None';
-      const docketMarkup = row.docketLink ? `<a href="${row.docketLink}" target="_blank" rel="noopener noreferrer">View Case</a>` : 'No docket link';
+      const chargesText = formatChargeCounts(Array.isArray(row.charges) ? row.charges : []);
+      const docketMarkup = row.docketLink ? `<a href="${row.docketLink}" target="_blank" rel="noopener noreferrer">View Case</a>` : 'None';
       const el = document.createElement('div');
       el.className = 'recordItem ongoingCaseRow';
       el.innerHTML = `
         <div class="recordHeader">
-          <span>#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
-          <span style="display:flex;align-items:center;gap:8px;">
+          <span class="ongoingCaseTitle">#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
+          <span class="ongoingCaseStatus">
             <span>${status}</span>
-            <span style="width:10px;height:10px;border-radius:50%;background:${isOpen ? '#22c55e' : '#ef4444'};"></span>
+            <span class="statusDot" style="background:${isOpen ? '#22c55e' : '#ef4444'};"></span>
           </span>
         </div>
         <div class="recordMeta hidden">
           <div class="ongoingCaseDetails">
             <div class="ongoingCaseDetailRow"><strong>Charges:</strong> ${chargesText}</div>
-            <div class="ongoingCaseDetailRow"><strong>Docket:</strong> ${docketMarkup}</div>
+            <div class="ongoingCaseDetailRow"><strong>Docket Link:</strong> ${docketMarkup}</div>
             <div class="ongoingCaseDetailRow"><strong>Assigned Attorney:</strong> ${row.assignedAttorney || 'None'}</div>
             <div class="ongoingCaseDetailRow"><strong>Notes:</strong> ${row.notes || 'None'}</div>
           </div>
@@ -1434,15 +1559,14 @@ function openHrRecordModal(id = '') {
   const current = hrSectionRows.find(r => r.id === id) || {};
   if (activeHrSection === 'ongoingCases') {
     const attorneys = hrPersonnel.map(p => p.name).filter(Boolean);
-    const selectedCharges = Array.isArray(current.charges) ? current.charges : [];
+    const chargeSelections = Array.isArray(current.charges) ? [...current.charges] : [];
     modalState = {
       fields: [],
       onSubmit: async () => {
-        const charges = [...document.querySelectorAll('#modal_charges_options input[type="checkbox"]:checked')].map(i => i.value);
         const payload = {
           caseNumber: (document.getElementById('modal_caseNumber').value || '').trim(),
           client: (document.getElementById('modal_client').value || '').trim(),
-          charges,
+          charges: [...chargeSelections],
           status: document.getElementById('modal_status').value || 'Open',
           assignedAttorney: document.getElementById('modal_assignedAttorney').value || '',
           docketLink: (document.getElementById('modal_docketLink').value || '').trim(),
@@ -1456,7 +1580,7 @@ function openHrRecordModal(id = '') {
     modal_fields.innerHTML = `
       <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${current.caseNumber || ''}" placeholder="26-CM-0005"></div>
       <div class="field"><label>Client</label><input id="modal_client" value="${current.client || ''}" placeholder="Client Name"></div>
-      <div class="field"><label>Charges</label><input id="modal_chargeSearch" placeholder="Search ECRP charges..."><div id="modal_charges_options" style="max-height:280px;overflow:auto;border:1px solid #1a2530;border-radius:10px;padding:8px;margin-top:8px;">${chargesList.map(charge => `<label style="display:flex;gap:8px;align-items:center;padding:6px 0;"><input type="checkbox" value="${charge.code}" ${selectedCharges.includes(charge.code) ? 'checked' : ''}><span>${charge.code} - ${charge.name}</span></label>`).join('')}</div></div>
+      <div class="field"><label>Charges</label><div class="chargeSelector"><input id="modal_chargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="modal_charges_options" class="chargeList"></div><div id="modal_selected_charges" class="selectedChargeList"></div></div></div>
       <div class="field"><label>Status</label><select id="modal_status">${ONGOING_CASE_STATUS_OPTIONS.map(status => `<option value="${status}" ${current.status === status ? 'selected' : ''}>${status}</option>`).join('')}</select></div>
       <div class="field"><label>Assigned Attorney</label><select id="modal_assignedAttorney"><option value="">Select attorney</option>${attorneys.map(name => `<option value="${name}" ${current.assignedAttorney === name ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
       <div class="field"><label>Docket Link</label><input id="modal_docketLink" value="${current.docketLink || ''}" placeholder="https://..."></div>
@@ -1464,12 +1588,60 @@ function openHrRecordModal(id = '') {
     `;
     modal_backdrop.classList.remove('hidden');
     const search = document.getElementById('modal_chargeSearch');
-    search.addEventListener('input', () => {
-      const q = search.value.trim().toLowerCase();
-      document.querySelectorAll('#modal_charges_options label').forEach((label) => {
-        label.style.display = label.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+    const optionsContainer = document.getElementById('modal_charges_options');
+    const selectedContainer = document.getElementById('modal_selected_charges');
+    const renderSelectedCharges = () => {
+      const entries = Object.entries(buildChargeCounts(chargeSelections));
+      selectedContainer.innerHTML = entries.length ? entries.map(([code, count]) => `
+        <div class="selectedChargeItem">
+          <span class="selectedChargeText">${formatCharge(code)}${count > 1 ? ` (x${count})` : ''}</span>
+          <button class="small danger" data-charge-remove="${code}">Remove</button>
+        </div>
+      `).join('') : '<div class="recordMeta">None</div>';
+      selectedContainer.querySelectorAll('[data-charge-remove]').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const code = btn.getAttribute('data-charge-remove');
+          const idx = chargeSelections.lastIndexOf(code);
+          if (idx >= 0) chargeSelections.splice(idx, 1);
+          renderChargeOptions();
+          renderSelectedCharges();
+        });
       });
-    });
+    };
+    const renderChargeOptions = () => {
+      const q = search.value.trim().toLowerCase();
+      const grouped = {};
+      chargesList.filter((charge) => `${charge.code} ${charge.name}`.toLowerCase().includes(q)).forEach((charge) => {
+        const category = getChargeCategory(charge.code);
+        if (!grouped[category]) grouped[category] = [];
+        grouped[category].push(charge);
+      });
+      optionsContainer.innerHTML = Object.entries(grouped).map(([category, items]) => `
+        <div class="chargeGroup">
+          <div class="chargeGroupHeader">${category}</div>
+          ${items.map((charge) => `
+            <button type="button" class="chargeOption ${chargeSelections.includes(charge.code) ? 'active' : ''}" data-charge-code="${charge.code}">
+              <span class="chargeCode">${charge.code}</span>
+              <span class="chargeName">${charge.name}</span>
+              <i data-lucide="check" class="chargeCheck"></i>
+            </button>
+          `).join('')}
+        </div>
+      `).join('') || '<div class="recordMeta">No charges found.</div>';
+      optionsContainer.querySelectorAll('[data-charge-code]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          chargeSelections.push(btn.getAttribute('data-charge-code'));
+          renderChargeOptions();
+          renderSelectedCharges();
+          if (window.lucide?.createIcons) lucide.createIcons();
+        });
+      });
+      if (window.lucide?.createIcons) lucide.createIcons();
+    };
+    search.addEventListener('input', renderChargeOptions);
+    renderChargeOptions();
+    renderSelectedCharges();
     return;
   }
   const fields = hrSections[activeHrSection].fields.map(key => ({ key, label: key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()) }));
