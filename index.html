@@ -780,7 +780,7 @@ select option {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA9FVAtjVAQZbahFRRA4gaCZD0XYLp46s8",
@@ -800,22 +800,25 @@ let selectedPersonnelId = '';
 let activeHrSection = 'basicInfo';
 let hrSectionRows = [];
 const ONGOING_CASE_STATUS_OPTIONS = ['Open', 'Closed'];
-const ECRP_CHARGES = [
-  { code: 'GM04', name: 'Failure to Comply' },
-  { code: 'PC01', name: 'Resisting Arrest' },
-  { code: 'PC02', name: 'Obstruction of Justice' },
-  { code: 'PC03', name: 'Disorderly Conduct' },
-  { code: 'PC04', name: 'Evading' },
-  { code: 'PC05', name: 'Reckless Driving' },
-  { code: 'PC06', name: 'Assault' },
-  { code: 'PC07', name: 'Battery' },
-  { code: 'PC08', name: 'Grand Theft Auto' },
-  { code: 'PC09', name: 'Possession of Stolen Property' },
-  { code: 'PC10', name: 'Fraud' }
-];
+let chargesList = [];
+
+async function loadPenalCodes() {
+  const snapshot = await getDocs(collection(db, "penalCodes"));
+  chargesList = snapshot.docs
+    .map((docSnap) => {
+      const data = docSnap.data() || {};
+      return {
+        code: String(data.code || '').trim(),
+        name: String(data.name || '').trim(),
+        category: data.category ? String(data.category).trim() : ''
+      };
+    })
+    .filter((charge) => charge.code && charge.name)
+    .sort((a, b) => a.code.localeCompare(b.code));
+}
 
 function formatCharge(chargeCode) {
-  const match = ECRP_CHARGES.find(c => c.code === chargeCode);
+  const match = chargesList.find(c => c.code === chargeCode);
   return match ? `${match.code} - ${match.name}` : chargeCode;
 }
 let modalState = null;
@@ -1385,7 +1388,7 @@ function openHrRecordModal(id = '') {
     modal_fields.innerHTML = `
       <div class="field"><label>Case Number</label><input id="modal_caseNumber" value="${current.caseNumber || ''}" placeholder="26-CM-0005"></div>
       <div class="field"><label>Client</label><input id="modal_client" value="${current.client || ''}" placeholder="Client Name"></div>
-      <div class="field"><label>Charges</label><input id="modal_chargeSearch" placeholder="Search ECRP charges..."><div id="modal_charges_options" style="max-height:180px;overflow:auto;border:1px solid #1a2530;border-radius:10px;padding:8px;margin-top:8px;">${ECRP_CHARGES.map(charge => `<label style="display:flex;gap:8px;align-items:center;padding:6px 0;"><input type="checkbox" value="${charge.code}" ${selectedCharges.includes(charge.code) ? 'checked' : ''}><span>${charge.code} - ${charge.name}</span></label>`).join('')}</div></div>
+      <div class="field"><label>Charges</label><input id="modal_chargeSearch" placeholder="Search ECRP charges..."><div id="modal_charges_options" style="max-height:280px;overflow:auto;border:1px solid #1a2530;border-radius:10px;padding:8px;margin-top:8px;">${chargesList.map(charge => `<label style="display:flex;gap:8px;align-items:center;padding:6px 0;"><input type="checkbox" value="${charge.code}" ${selectedCharges.includes(charge.code) ? 'checked' : ''}><span>${charge.code} - ${charge.name}</span></label>`).join('')}</div></div>
       <div class="field"><label>Status</label><select id="modal_status">${ONGOING_CASE_STATUS_OPTIONS.map(status => `<option value="${status}" ${current.status === status ? 'selected' : ''}>${status}</option>`).join('')}</select></div>
       <div class="field"><label>Assigned Attorney</label><select id="modal_assignedAttorney"><option value="">Select attorney</option>${attorneys.map(name => `<option value="${name}" ${current.assignedAttorney === name ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
       <div class="field"><label>Docket Link</label><input id="modal_docketLink" value="${current.docketLink || ''}" placeholder="https://..."></div>
@@ -1415,6 +1418,15 @@ function subscribePersonnel() {
     renderHrList();
     renderHrSections();
   });
+}
+
+async function initializePenalCodes() {
+  try {
+    await loadPenalCodes();
+  } catch (error) {
+    console.error('Failed to load penal codes from Firestore:', error);
+    chargesList = [];
+  }
 }
 function saveClientRecord() {
   const rows = getRecords('clientRecords');
@@ -1459,6 +1471,7 @@ inputs.forEach(el => el.addEventListener('input', generate));
 inputs.forEach(el => el.addEventListener('change', generate));
 
 setupDatePicker();
+initializePenalCodes();
 loadSettings();
 addExhibit();
 setTemplate('outreach');
