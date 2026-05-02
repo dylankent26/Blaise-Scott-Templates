@@ -4,50 +4,575 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blaise & Scott BBCode Tool</title>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
-body { font-family: Arial, sans-serif; margin:0; background:#10131a; color:#fff; }
-.container { max-width:1250px; margin:auto; padding:20px; }
-.tabs { display:flex; gap:10px; margin-bottom:10px; }
-.tab { padding:8px 12px; background:#2a3140; border-radius:8px; cursor:pointer; }
-.tab.active { background:#4f7cff; }
-.card { background:#181d27; padding:15px; border-radius:10px; }
-.builderGrid { display:grid; grid-template-columns:260px 1fr; gap:15px; }
-.templateList button { display:block; width:100%; text-align:left; margin:0 0 8px 0; background:#2a3140; }
-.templateList button.selected { background:#4f7cff; }
-input, textarea, select { width:100%; box-sizing:border-box; background:#0e1118; color:#fff; border:1px solid #333; border-radius:6px; padding:8px; }
-textarea { min-height:170px; resize:vertical; }
-#output { min-height:360px; margin-top:10px; }
-button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px; background:#4f7cff; color:white; cursor:pointer; }
-.small { background:#3a4152; }
-.field { margin-bottom:10px; }
-.hidden { display:none; }
-.exhibitBox { border:1px solid #333; padding:10px; border-radius:8px; margin-bottom:10px; background:#111722; }
-@media (max-width:850px) { .builderGrid { grid-template-columns:1fr; } }
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0b0d12, #1a1f2e);
+  color: #e0e6ff;
+}
+.container {
+  max-width: 1400px;
+  width: 95%;
+  margin: 0 auto;
+  padding: 20px;
+}
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #1f2a3a;
+  padding-bottom: 16px;
+  animation: slideDown 0.4s ease-out;
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.tab {
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid #2a3a4a;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #a0a8c4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.tab:hover {
+  background: #1f2a3a;
+  transform: translateY(-2px);
+  border-color: #3a4a5a;
+}
+.tab.active {
+  background: linear-gradient(135deg, #4f7cff, #6a8cff);
+  color: #fff;
+  border-color: #4f7cff;
+  box-shadow: 0 4px 16px rgba(79, 124, 255, 0.2);
+  transform: translateY(-2px);
+}
+.tab i {
+  transition: transform 0.3s ease;
+}
+.tab.active i {
+  transform: scale(1.1);
+}
+.card {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.builderGrid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  animation: slideUp 0.5s ease-out;
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.templateList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #0f1419;
+  border: 1px solid #1a2530;
+  border-radius: 16px;
+  padding: 20px;
+  height: fit-content;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+.templateList:hover {
+  border-color: #2a3a4a;
+  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+}
+.templateList h3 {
+  margin: 0 0 16px 0;
+  color: #e0e6ff;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.templateList h3 i {
+  width: 18px;
+  height: 18px;
+  color: #4f7cff;
+}
+.templateList button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #a0a8c4;
+  border: 1px solid transparent;
+  padding: 12px 16px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  cursor: pointer;
+}
+.templateList button:hover {
+  background: rgba(79, 124, 255, 0.12);
+  color: #e0e6ff;
+  border-color: rgba(79, 124, 255, 0.35);
+}
+.templateList button:hover i {
+  color: #4f7cff;
+}
+.templateList button.selected {
+  background: linear-gradient(135deg, #4f7cff, #6a8cff);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(79, 124, 255, 0.25);
+}
+.templateList button i {
+  width: 18px;
+  height: 18px;
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+}
+input,
+textarea,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0f1419;
+  color: #e0e6ff;
+  border: 1px solid #1a2530;
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #5a6a7a;
+}
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: #2a3a4a;
+  box-shadow: 0 2px 8px rgba(79, 124, 255, 0.05);
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #4f7cff;
+  background: #0f1419;
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+  transform: translateY(-1px);
+}
+textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+.field {
+  margin-bottom: 18px;
+  animation: slideUp 0.5s ease-out;
+}
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #a0a8c4;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+.field:focus-within label {
+  color: #4f7cff;
+}
+.fieldsContainer {
+  width: 100%;
+  background: #0f1419;
+  border: 1px solid #1a2530;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  animation: slideUp 0.5s ease-out 0.1s both;
+}
+.fieldsContainer:hover {
+  border-color: #2a3a4a;
+  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+}
+#output {
+  min-height: 360px;
+  margin-top: 0;
+  font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+  background: #0f1419;
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  color: #e0e6ff;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+#output:hover {
+  background: #0f1419;
+}
+.outputContainer {
+  width: 100%;
+  background: #0f1419;
+  border: 1px solid #1a2530;
+  border-radius: 16px;
+  margin-top: 30px;
+  overflow: hidden;
+  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.5s ease-out 0.15s both;
+  transition: all 0.3s ease;
+}
+.outputContainer:hover {
+  border-color: #2a3a4a;
+  box-shadow: 0 8px 30px rgba(79, 124, 255, 0.1);
+}
+.outputHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #1a2530;
+  color: #e0e6ff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, rgba(79, 124, 255, 0.05), transparent);
+}
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #e0e6ff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sectionHeader i {
+  color: #4f7cff;
+  width: 18px;
+  height: 18px;
+}
+button {
+  margin-top: 0;
+  margin-right: 0;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #4f7cff;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+button:active::before {
+  width: 300px;
+  height: 300px;
+}
+button:hover {
+  background: linear-gradient(135deg, #6a8cff, #7a9cff);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(79, 124, 255, 0.3);
+}
+button:active {
+  transform: translateY(-1px);
+}
+button i {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+button:hover i {
+  transform: scale(1.15);
+}
+button.small {
+  background: #1a2530;
+  color: #e0e6ff;
+  height: auto;
+  padding: 9px 14px;
+  font-size: 0.9rem;
+}
+button.small:hover {
+  background: #2a3a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 124, 255, 0.15);
+}
+button.small i {
+  width: 16px;
+  height: 16px;
+}
+#copyButton, #copyButtonHeader {
+  background: linear-gradient(135deg, #4f7cff, #6a8cff);
+  box-shadow: 0 0 20px rgba(79, 124, 255, 0.25);
+}
+#copyButton:hover, #copyButtonHeader:hover {
+  box-shadow: 0 12px 32px rgba(79, 124, 255, 0.4);
+}
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  align-items: center;
+  animation: slideUp 0.5s ease-out 0.2s both;
+}
+.date-input {
+  cursor: pointer;
+}
+.datePicker {
+  position: absolute;
+  background: #0f1419;
+  color: #e0e6ff;
+  border: 1px solid #1a2530;
+  border-radius: 12px;
+  padding: 14px;
+  z-index: 1000;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  width: 270px;
+  animation: scaleIn 0.3s ease-out;
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.datePicker.hidden {
+  display: none;
+}
+.datePickerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.datePickerHeader button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: #1a2530;
+  color: #e0e6ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.datePickerHeader button:hover {
+  background: #2a3a4a;
+  transform: scale(1.05);
+}
+.datePickerHeader div {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.datePickerGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.datePickerWeekday {
+  font-size: 0.75rem;
+  color: #5a6a7a;
+  text-align: center;
+  font-weight: 500;
+}
+.datePickerGrid button {
+  border: none;
+  border-radius: 8px;
+  background: #1a2530;
+  color: #e0e6ff;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+}
+.datePickerGrid button:hover {
+  background: #2a3a4a;
+  transform: scale(1.05);
+}
+.datePickerGrid button.selected {
+  background: linear-gradient(135deg, #4f7cff, #6a8cff);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3);
+}
+.exhibitBox {
+  border: 1px solid #1a2530;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  background: #0a0f15;
+  transition: all 0.3s ease;
+  display: block;
+  animation: slideUp 0.4s ease-out;
+}
+.exhibitBox:hover {
+  border-color: #2a3a4a;
+  background: #0f1419;
+  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.1);
+}
+.exhibitBox > strong {
+  display: block;
+  margin-bottom: 12px;
+  color: #e0e6ff;
+}
+.exhibitBox .exhibit-field {
+  margin-bottom: 12px;
+}
+.exhibitBox .exhibit-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #a0a8c4;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.exhibitBox input,
+.exhibitBox textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.exhibitBox .exhibit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.exhibitBox button {
+  flex: 1;
+  height: 36px;
+  padding: 0 10px;
+}
+.hidden {
+  display: none;
+}
+@media (max-width: 950px) {
+  .builderGrid {
+    grid-template-columns: 1fr;
+  }
+  .tabs {
+    flex-wrap: wrap;
+  }
+}
+[data-lucide] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+h3 {
+  color: #e0e6ff;
+  margin: 0 0 16px 0;
+  font-size: 1.05rem;
+}
+label {
+  color: #a0a8c4;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+select {
+  cursor: pointer;
+}
+select option {
+  background: #0f1419;
+  color: #e0e6ff;
+}
 </style>
 </head>
 <body>
 <div class="container">
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('builder')">Builder</div>
-  <div class="tab" onclick="switchTab('settings')">Settings</div>
-  <div class="tab" onclick="switchTab('drafts')">Drafts</div>
+  <div class="tab active" onclick="switchTab('builder')"><i data-lucide="wrench"></i>Builder</div>
+  <div class="tab" onclick="switchTab('settings')"><i data-lucide="settings"></i>Settings</div>
+  <div class="tab" onclick="switchTab('drafts')"><i data-lucide="file-text"></i>Drafts</div>
 </div>
 
 <div id="builder" class="card">
   <div class="builderGrid">
     <div class="templateList">
-      <h3>Templates</h3>
-      <button id="btn_outreach" class="selected" onclick="setTemplate('outreach')">Client Outreach</button>
-      <button id="btn_notice" onclick="setTemplate('notice')">Notice of Counsel</button>
-      <button id="btn_suppress" onclick="setTemplate('suppress')">Motion to Suppress</button>
-      <button id="btn_compel" onclick="setTemplate('compel')">Motion to Compel Discovery</button>
+      <h3><i data-lucide="layers"></i>Templates</h3>
+      <button id="btn_outreach" class="selected" onclick="setTemplate('outreach')"><i data-lucide="mail"></i>Client Outreach</button>
+      <button id="btn_notice" onclick="setTemplate('notice')"><i data-lucide="alert-circle"></i>Notice of Counsel</button>
+      <button id="btn_suppress" onclick="setTemplate('suppress')"><i data-lucide="ban"></i>Motion to Suppress</button>
+      <button id="btn_compel" onclick="setTemplate('compel')"><i data-lucide="send"></i>Motion to Compel Discovery</button>
     </div>
 
     <div>
-      <div id="commonWhoTo" class="field">
+      <div class="fieldsContainer">
+        <div class="sectionHeader"><i data-lucide="input"></i>Input Fields</div>
+        
+        <div id="commonWhoTo" class="field">
         <label>Who To</label>
-        <input id="whoTo">
+        <input id="whoTo" placeholder="Enter name or title...">
       </div>
 
       <div id="outreachFields">
@@ -56,37 +581,41 @@ button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px; back
       </div>
 
       <div id="noticeFields" class="hidden">
-        <div class="field"><label>Date, DD/APR/YYYY</label><input id="noticeDate" placeholder="01/APR/2026"></div>
-        <div class="field"><label>Defendant Name</label><input id="noticeDefendant"></div>
+        <div class="field"><label>Date</label><input class="date-input" id="noticeDate" readonly placeholder="Select date"></div>
+        <div class="field"><label>Defendant Name</label><input id="noticeDefendant" placeholder="Enter defendant name..."></div>
         <div class="field"><label>Counsel Role</label><select id="noticeRole"><option>Primary Counsel</option><option>Co-Counsel</option></select></div>
       </div>
 
       <div id="suppressFields" class="hidden">
         <div class="field"><label>Case Number</label><input id="suppressCase" placeholder="00-CM-0000"></div>
-        <div class="field"><label>Date, DD/APR/YYYY</label><input id="suppressDate" placeholder="01/APR/2026"></div>
-        <div class="field"><label>Defendant Name</label><input id="suppressDefendant"></div>
+        <div class="field"><label>Date</label><input class="date-input" id="suppressDate" readonly placeholder="Select date"></div>
+        <div class="field"><label>Defendant Name</label><input id="suppressDefendant" placeholder="Enter defendant name..."></div>
         <h3>Exhibits</h3>
         <div id="exhibits"></div>
-        <button class="small" onclick="addExhibit()">Add Exhibit</button>
+        <button class="small" onclick="addExhibit()"><i data-lucide="plus"></i>Add Exhibit</button>
       </div>
 
       <div id="compelFields" class="hidden">
         <div class="field"><label>Case Number</label><input id="compelCase" placeholder="00-CM-0000"></div>
-        <div class="field"><label>Date, DD/APR/YYYY</label><input id="compelDate" placeholder="01/APR/2026"></div>
-        <div class="field"><label>Defendant Name</label><input id="compelDefendant"></div>
-        <label>Detailed Reasoning</label>
-        <textarea id="compelReasoning"></textarea>
+        <div class="field"><label>Date</label><input class="date-input" id="compelDate" readonly placeholder="Select date"></div>
+        <div class="field"><label>Defendant Name</label><input id="compelDefendant" placeholder="Enter defendant name..."></div>
+        <div class="field"><label>Reasoning</label>
+        <textarea id="compelReasoning" placeholder="Discovery has not been provided in a timely manner. This motion is submitted to avoid infringing upon the defendant's right to a speedy trial and to ensure the efficient progression of the case."></textarea></div>
       </div>
 
-      <div>
-        <button onclick="insertPhrase('Please be advised that ')">Insert Formal Start</button>
-        <button onclick="insertPhrase('Respectfully submitted.')">Insert Closing</button>
+      <div class="buttonGroup">
+        <button onclick="saveDraft()" class="small"><i data-lucide="save"></i>Save Draft</button>
+        <button id="copyButton" onclick="copyOutput()"><i data-lucide="copy"></i>Copy BBCode</button>
+      </div>
       </div>
 
-      <button onclick="saveDraft()" class="small">Save Draft</button>
-      <button onclick="copyOutput()">Copy BBCode</button>
-
-      <textarea id="output" readonly></textarea>
+      <div class="outputContainer">
+        <div class="outputHeader">
+          <div style="display: flex; align-items: center; gap: 8px;"><i data-lucide="code"></i>Output (BBCode)</div>
+          <button id="copyButtonHeader" onclick="copyOutput()" class="small" style="margin-right: 0;"><i data-lucide="copy"></i>Copy</button>
+        </div>
+        <textarea id="output" readonly style="border-radius: 0; border: none; margin: 0;"></textarea>
+      </div>
     </div>
   </div>
 </div>
@@ -95,13 +624,21 @@ button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px; back
   <label>Name</label><input id="set_name" placeholder="Levy Gold">
   <label>Title</label><input id="set_title" placeholder="Interim Executive Partner">
   <label>Phone</label><input id="set_phone" placeholder="590-2182">
-  <label>Logo Image URL</label><input id="set_logo" placeholder="https://i.ibb.co/N2sHcmBP/logologolgo.png">
   <label>Signature Image URL</label><input id="set_sig" placeholder="https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png">
-  <button onclick="saveSettings()">Save Settings</button>
+  <button onclick="saveSettings()"><i data-lucide="check-circle"></i>Save Settings</button>
 </div>
 
 <div id="drafts" class="card" style="display:none;">
   <div id="draftList"></div>
+</div>
+
+<div id="datePicker" class="datePicker hidden">
+  <div class="datePickerHeader">
+    <button type="button" id="prevMonth">‹</button>
+    <div id="datePickerMonth"></div>
+    <button type="button" id="nextMonth">›</button>
+  </div>
+  <div class="datePickerGrid" id="datePickerGrid"></div>
 </div>
 
 </div>
@@ -128,7 +665,16 @@ function setTemplate(name) {
   ['outreachFields','noticeFields','suppressFields','compelFields'].forEach(id => document.getElementById(id).classList.add('hidden'));
   document.getElementById(name + 'Fields').classList.remove('hidden');
 
+  // Clear and reset exhibits when switching to suppress template
+  if (name === 'suppress') {
+    exhibitCount = 0;
+    document.getElementById('exhibits').innerHTML = '';
+    addExhibit();
+  }
+
   document.getElementById('commonWhoTo').style.display = name === 'outreach' ? 'block' : 'none';
+  fillTemplateDefaults(name);
+  if (window.lucide) lucide.createIcons();
   generate();
 }
 
@@ -137,14 +683,127 @@ function getSettings() {
     name: localStorage.getItem('name') || 'Levy Gold',
     title: localStorage.getItem('title') || 'Interim Executive Partner',
     phone: localStorage.getItem('phone') || '590-2182',
-    logo: localStorage.getItem('logo') || 'https://i.ibb.co/N2sHcmBP/logologolgo.png',
+    logo: 'https://i.ibb.co/N2sHcmBP/logologolgo.png',
     sig: localStorage.getItem('sig') || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png'
   };
 }
 
 function normaliseDate(value) {
-  return value.trim().replace(/\/([a-z]{3})\//i, function(match, month) {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  const parsed = new Date(trimmed);
+  if (!isNaN(parsed.getTime())) {
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const day = String(parsed.getDate()).padStart(2, '0');
+    const month = months[parsed.getMonth()];
+    return `${day}/${month}/${parsed.getFullYear()}`;
+  }
+  return trimmed.replace(/\/([a-z]{3})\//i, function(match, month) {
     return '/' + month.toUpperCase() + '/';
+  });
+}
+
+function getDefaultOutreachMessage() {
+  return `My name is Levy Gold, Junior Attorney at Blaise & Scott, a law firm based in Del Perro.
+
+I have reviewed your case on the docket and would like to offer my services as your counsel. You would be represented by me through Blaise & Scott, with the firm overseeing and supporting your defence throughout the matter.
+
+Legal fees are required for representation. Full details regarding fees, billing structure, and any applicable retainer will be discussed transparently prior to engagement and confirmed before any substantive work begins.
+
+Please respond to this email at your earliest convenience so that we can arrange a meeting and determine how you wish to proceed.
+
+Thank you for your time and consideration.`;
+}
+
+function getDefaultCompelReasoning() {
+  return 'Discovery has not been provided in a timely manner. This motion is submitted to prevent further infringement upon the defendant’s right to a speedy trial and to ensure the case proceeds without unnecessary delay.';
+}
+
+function fillTemplateDefaults(name) {
+  if (name === 'outreach') {
+    const outreachMessage = document.getElementById('outreachMessage');
+    if (!outreachMessage.value.trim()) {
+      outreachMessage.value = getDefaultOutreachMessage();
+    }
+  }
+}
+
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let datePickerState = { viewDate: new Date() };
+let activeDateInput = null;
+
+function openDatePicker(input) {
+  activeDateInput = input;
+  const selected = input.value ? new Date(input.value) : new Date();
+  datePickerState.viewDate = isNaN(selected.getTime()) ? new Date() : new Date(selected.getFullYear(), selected.getMonth(), 1);
+  renderDatePicker();
+  const rect = input.getBoundingClientRect();
+  const picker = document.getElementById('datePicker');
+  picker.style.top = `${window.scrollY + rect.bottom + 8}px`;
+  picker.style.left = `${window.scrollX + rect.left}px`;
+  picker.classList.remove('hidden');
+}
+
+function renderDatePicker() {
+  const monthLabel = document.getElementById('datePickerMonth');
+  const grid = document.getElementById('datePickerGrid');
+  monthLabel.textContent = `${monthNames[datePickerState.viewDate.getMonth()]} ${datePickerState.viewDate.getFullYear()}`;
+  grid.innerHTML = '';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(day => {
+    const label = document.createElement('div');
+    label.className = 'datePickerWeekday';
+    label.textContent = day;
+    grid.appendChild(label);
+  });
+  const firstDayOfMonth = new Date(datePickerState.viewDate.getFullYear(), datePickerState.viewDate.getMonth(), 1).getDay();
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    grid.appendChild(document.createElement('div'));
+  }
+  const daysInMonth = new Date(datePickerState.viewDate.getFullYear(), datePickerState.viewDate.getMonth() + 1, 0).getDate();
+  const selectedDate = activeDateInput && activeDateInput.value ? new Date(activeDateInput.value) : null;
+  for (let day = 1; day <= daysInMonth; day++) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = day;
+    if (selectedDate && selectedDate.getFullYear() === datePickerState.viewDate.getFullYear() && selectedDate.getMonth() === datePickerState.viewDate.getMonth() && selectedDate.getDate() === day) {
+      btn.classList.add('selected');
+    }
+    btn.addEventListener('click', () => selectDate(day));
+    grid.appendChild(btn);
+  }
+}
+
+function selectDate(day) {
+  const date = new Date(datePickerState.viewDate.getFullYear(), datePickerState.viewDate.getMonth(), day);
+  activeDateInput.value = formatDateInputValue(date);
+  activeDateInput.dispatchEvent(new Event('input', { bubbles: true }));
+  document.getElementById('datePicker').classList.add('hidden');
+}
+
+function changeMonth(amount) {
+  datePickerState.viewDate = new Date(datePickerState.viewDate.getFullYear(), datePickerState.viewDate.getMonth() + amount, 1);
+  renderDatePicker();
+}
+
+function formatDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function setupDatePicker() {
+  document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+  document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+  document.addEventListener('click', event => {
+    const picker = document.getElementById('datePicker');
+    if (!picker.contains(event.target) && !event.target.classList.contains('date-input')) {
+      picker.classList.add('hidden');
+    }
+  });
+  document.querySelectorAll('.date-input').forEach(input => {
+    input.addEventListener('focus', () => openDatePicker(input));
+    input.addEventListener('click', () => openDatePicker(input));
   });
 }
 
@@ -205,12 +864,25 @@ function addExhibit(data = {}) {
   div.className = 'exhibitBox';
   div.innerHTML = `
     <strong>Exhibit ${exhibitCount}</strong>
-    <label>Exhibit Number</label><input class="exhibitNum" value="${data.num || exhibitCount}">
-    <label>Evidence Name</label><input class="exhibitName" value="${data.name || ''}">
-    <label>Source of Discovery</label><input class="exhibitSource" value="${data.source || ''}">
-    <label>Requested Evidence to Suppress</label><textarea class="exhibitSuppress">${data.suppress || ''}</textarea>
-    <label>Detailed Reasoning</label><textarea class="exhibitReason">${data.reason || ''}</textarea>
-    <button class="small" onclick="this.parentElement.remove(); generate();">Remove Exhibit</button>`;
+    <div class="exhibit-field">
+      <label>Exhibit Number</label>
+      <input class="exhibitNum" value="${data.num || exhibitCount}">
+    </div>
+    <div class="exhibit-field">
+      <label>Evidence Name</label>
+      <input class="exhibitName" value="${data.name || ''}">
+    </div>
+    <div class="exhibit-field">
+      <label>Requested Evidence to Suppress</label>
+      <textarea class="exhibitSuppress">${data.suppress || ''}</textarea>
+    </div>
+    <div class="exhibit-field">
+      <label>Detailed Reasoning</label>
+      <textarea class="exhibitReason">${data.reason || ''}</textarea>
+    </div>
+    <div class="exhibit-actions">
+      <button class="small" onclick="this.closest('.exhibitBox').remove(); generate();">Remove Exhibit</button>
+    </div>`;
   document.getElementById('exhibits').appendChild(div);
   div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', generate));
   generate();
@@ -224,11 +896,10 @@ function buildSuppress() {
   document.querySelectorAll('.exhibitBox').forEach(box => {
     const num = box.querySelector('.exhibitNum').value.trim();
     const name = box.querySelector('.exhibitName').value.trim();
-    const source = box.querySelector('.exhibitSource').value.trim();
     const suppress = box.querySelector('.exhibitSuppress').value.trim();
     const reason = box.querySelector('.exhibitReason').value.trim();
     exhibitText += `\n[list=none]
-Exhibit ${num}: [i]${name}, ${source}[/i]
+Exhibit ${num}: [i]${name}[/i]
 [b]Requested Evidence to Suppress:[/b][quote]
 ${suppress}
 [/quote]
@@ -259,7 +930,7 @@ function buildCompel() {
   const caseNo = document.getElementById('compelCase').value.trim() || '00-CM-0000';
   const date = normaliseDate(document.getElementById('compelDate').value);
   const defendant = document.getElementById('compelDefendant').value.trim() || 'Defendant';
-  const reasoning = document.getElementById('compelReasoning').value.trim();
+  const reasoning = document.getElementById('compelReasoning').value.trim() || getDefaultCompelReasoning();
   return `[b]To whom it may concern,[/b]
 
 [hr][/hr]
@@ -276,7 +947,7 @@ A Motion to Compel Discovery was filed in the above case on ${date}.
 
 Defendant ${defendant}, by and through counsel of record, respectfully moves to compel discovery to expedite the case.
 
-[list=none][b]Detailed Reasoning:[/b] ${reasoning}
+[list=none][b]Reasoning:[/b] ${reasoning}
 [/list]`;
 }
 
@@ -291,15 +962,22 @@ function generate() {
 
 function copyOutput(){
   const out = document.getElementById('output');
+  const button = document.getElementById('copyButton');
+  const originalText = button.textContent;
   out.select();
-  navigator.clipboard.writeText(out.value);
+  navigator.clipboard.writeText(out.value).then(() => {
+    button.textContent = 'Copied!';
+    setTimeout(() => button.textContent = originalText, 1500);
+  }).catch(() => {
+    button.textContent = 'Copy Failed';
+    setTimeout(() => button.textContent = originalText, 1500);
+  });
 }
 
 function saveSettings(){
   localStorage.setItem('name', document.getElementById('set_name').value || 'Levy Gold');
   localStorage.setItem('title', document.getElementById('set_title').value || 'Interim Executive Partner');
   localStorage.setItem('phone', document.getElementById('set_phone').value || '590-2182');
-  localStorage.setItem('logo', document.getElementById('set_logo').value || 'https://i.ibb.co/N2sHcmBP/logologolgo.png');
   localStorage.setItem('sig', document.getElementById('set_sig').value || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png');
   generate();
 }
@@ -309,18 +987,7 @@ function loadSettings(){
   document.getElementById('set_name').value = s.name;
   document.getElementById('set_title').value = s.title;
   document.getElementById('set_phone').value = s.phone;
-  document.getElementById('set_logo').value = s.logo;
   document.getElementById('set_sig').value = s.sig;
-}
-
-function insertPhrase(text){
-  const map = {
-    outreach: 'outreachMessage',
-    compel: 'compelReasoning'
-  };
-  const target = document.getElementById(map[currentTemplate] || 'outreachMessage');
-  target.value += text;
-  generate();
 }
 
 function saveDraft(){
@@ -358,10 +1025,12 @@ const inputs = document.querySelectorAll('input, textarea, select');
 inputs.forEach(el => el.addEventListener('input', generate));
 inputs.forEach(el => el.addEventListener('change', generate));
 
+setupDatePicker();
 loadSettings();
 addExhibit();
 setTemplate('outreach');
 loadDrafts();
+if (window.lucide) lucide.createIcons();
 generate();
 </script>
 </body>
