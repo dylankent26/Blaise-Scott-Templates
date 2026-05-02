@@ -604,6 +604,7 @@ select option {
       </div>
 
       <div class="buttonGroup">
+        <button onclick="clearForm()" class="small"><i data-lucide="trash-2"></i>Clear</button>
         <button onclick="saveDraft()" class="small"><i data-lucide="save"></i>Save Draft</button>
         <button id="copyButton" onclick="copyOutput()"><i data-lucide="copy"></i>Copy BBCode</button>
       </div>
@@ -704,7 +705,15 @@ function normaliseDate(value) {
 }
 
 function getDefaultOutreachMessage() {
-  return `My name is Levy Gold, Junior Attorney at Blaise & Scott, a law firm based in Del Perro.
+  const s = getSettings();
+  const name = localStorage.getItem('name') || '';
+  const title = localStorage.getItem('title') || '';
+  
+  if (!name || !title) {
+    return '';
+  }
+  
+  return `My name is ${name}, ${title} at Blaise & Scott, a law firm based in Del Perro.
 
 I have reviewed your case on the docket and would like to offer my services as your counsel. You would be represented by me through Blaise & Scott, with the firm overseeing and supporting your defence throughout the matter.
 
@@ -833,15 +842,7 @@ ${s.name} - ${s.title}
 
 function buildOutreach() {
   const whoTo = document.getElementById('whoTo').value.trim() || 'To whom it may concern';
-  const message = document.getElementById('outreachMessage').value.trim() || `My name is Levy Gold, Junior Attorney at Blaise & Scott, a law firm based in Del Perro.
-
-I have reviewed your case on the docket and would like to offer my services as your counsel. You would be represented by me through Blaise & Scott, with the firm overseeing and supporting your defence throughout the matter.
-
-Legal fees are required for representation. Full details regarding fees, billing structure, and any applicable retainer will be discussed transparently prior to engagement and confirmed before any substantive work begins.
-
-Please respond to this email at your earliest convenience so that we can arrange a meeting and determine how you wish to proceed.
-
-Thank you for your time and consideration.`;
+  const message = document.getElementById('outreachMessage').value.trim();
   return `[b]${whoTo},[/b]
 
 ${message}`;
@@ -1019,6 +1020,31 @@ function deleteDraft(i){
   drafts.splice(i,1);
   localStorage.setItem('drafts', JSON.stringify(drafts));
   loadDrafts();
+}
+
+function clearForm(){
+  if (!confirm('Are you sure you want to clear all form fields?')) return;
+  
+  // Clear all input fields
+  document.getElementById('whoTo').value = '';
+  document.getElementById('outreachMessage').value = '';
+  document.getElementById('noticeDate').value = '';
+  document.getElementById('noticeDefendant').value = '';
+  document.getElementById('noticeRole').selectedIndex = 0;
+  document.getElementById('suppressCase').value = '';
+  document.getElementById('suppressDate').value = '';
+  document.getElementById('suppressDefendant').value = '';
+  document.getElementById('compelCase').value = '';
+  document.getElementById('compelDate').value = '';
+  document.getElementById('compelDefendant').value = '';
+  document.getElementById('compelReasoning').value = '';
+  
+  // Clear all exhibits
+  exhibitCount = 0;
+  document.getElementById('exhibits').innerHTML = '';
+  addExhibit();
+  
+  generate();
 }
 
 const inputs = document.querySelectorAll('input, textarea, select');
