@@ -607,8 +607,42 @@ select option {
   text-align: left;
 }
 .ongoingCaseRow .recordMeta {
-  padding: 0 12px 12px;
-  line-height: 1.7;
+  padding: 10px 12px 12px;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ongoingCaseDetails {
+  display: grid;
+  gap: 6px;
+}
+.ongoingCaseDetailRow {
+  color: #a0a8c4;
+}
+.ongoingCaseFooter {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #1f2a3a;
+  display: flex;
+  justify-content: flex-end;
+}
+.ongoingCaseActions {
+  display: flex;
+  gap: 8px;
+}
+.ongoingCaseActions .small {
+  min-width: 88px;
+  justify-content: center;
+}
+.ongoingCaseActions .danger {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+}
+.ongoingCaseActions .danger:hover {
+  background: rgba(239, 68, 68, 0.32);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
 }
 .ongoingCaseRow:hover {
   transform: translateY(-2px) scale(1.01);
@@ -1319,11 +1353,18 @@ function renderHrSectionList() {
           </span>
         </div>
         <div class="recordMeta hidden">
-          <div><strong>Charges:</strong> ${chargesText}</div>
-          <div><strong>Docket:</strong> ${docketMarkup}</div>
-          <div><strong>Assigned Attorney:</strong> ${row.assignedAttorney || 'None'}</div>
-          <div><strong>Notes:</strong> ${row.notes || 'None'}</div>
-          <div style="margin-top:10px;"><button class="small" onclick="openHrRecordModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrSectionRecord('${row.id}')">Delete</button></div>
+          <div class="ongoingCaseDetails">
+            <div class="ongoingCaseDetailRow"><strong>Charges:</strong> ${chargesText}</div>
+            <div class="ongoingCaseDetailRow"><strong>Docket:</strong> ${docketMarkup}</div>
+            <div class="ongoingCaseDetailRow"><strong>Assigned Attorney:</strong> ${row.assignedAttorney || 'None'}</div>
+            <div class="ongoingCaseDetailRow"><strong>Notes:</strong> ${row.notes || 'None'}</div>
+          </div>
+          <div class="ongoingCaseFooter">
+            <div class="ongoingCaseActions">
+              <button class="small" onclick="openHrRecordModal('${row.id}')">Edit</button>
+              <button class="small danger" onclick="deleteHrSectionRecord('${row.id}')">Delete</button>
+            </div>
+          </div>
         </div>`;
       const details = el.querySelector('.recordMeta');
       el.addEventListener('click', (event) => {
