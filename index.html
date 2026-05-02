@@ -589,6 +589,33 @@ select option {
 .recordItem { border: 1px solid #1f2a3a; border-radius: 12px; padding: 12px; background: #0a1016; }
 .recordHeader { display:flex; justify-content: space-between; gap: 8px; font-weight: 600; color:#e0e6ff; margin-bottom:6px; }
 .recordMeta { color:#a0a8c4; font-size: .9rem; white-space: pre-wrap; }
+.ongoingCaseRow {
+  padding: 0;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transform-origin: center;
+}
+.ongoingCaseRow .recordHeader {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+.ongoingCaseRow .recordMeta {
+  padding: 0 12px 12px;
+  line-height: 1.7;
+}
+.ongoingCaseRow:hover {
+  transform: translateY(-2px) scale(1.01);
+  border-color: #2a3a4a;
+  background: #0f1419;
+  box-shadow: 0 10px 24px rgba(79, 124, 255, 0.12);
+}
 .personnelLayout { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
 .personnelListPanel, .personnelDetailPanel { border: 1px solid #1f2a3a; border-radius: 12px; background: #0a1016; padding: 14px; }
 .personnelCard { border: 1px solid #1f2a3a; border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
@@ -1282,27 +1309,27 @@ function renderHrSectionList() {
       const chargesText = (Array.isArray(row.charges) && row.charges.length) ? row.charges.map(formatCharge).join(', ') : 'None';
       const docketMarkup = row.docketLink ? `<a href="${row.docketLink}" target="_blank" rel="noopener noreferrer">View Case</a>` : 'No docket link';
       const el = document.createElement('div');
-      el.className = 'recordItem';
-      el.style.borderRadius = '12px';
-      el.style.marginBottom = '10px';
+      el.className = 'recordItem ongoingCaseRow';
       el.innerHTML = `
-        <button class="recordHeader" style="width:100%;background:transparent;border:none;padding:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;">
+        <div class="recordHeader">
           <span>#${row.caseNumber || 'None'} State of San Andreas v. ${row.client || 'None'}</span>
           <span style="display:flex;align-items:center;gap:8px;">
             <span>${status}</span>
             <span style="width:10px;height:10px;border-radius:50%;background:${isOpen ? '#22c55e' : '#ef4444'};"></span>
           </span>
-        </button>
-        <div class="recordMeta hidden" style="padding:0 12px 12px;line-height:1.7;">
+        </div>
+        <div class="recordMeta hidden">
           <div><strong>Charges:</strong> ${chargesText}</div>
           <div><strong>Docket:</strong> ${docketMarkup}</div>
           <div><strong>Assigned Attorney:</strong> ${row.assignedAttorney || 'None'}</div>
           <div><strong>Notes:</strong> ${row.notes || 'None'}</div>
           <div style="margin-top:10px;"><button class="small" onclick="openHrRecordModal('${row.id}')">Edit</button> <button class="small" onclick="deleteHrSectionRecord('${row.id}')">Delete</button></div>
         </div>`;
-      const header = el.querySelector('.recordHeader');
       const details = el.querySelector('.recordMeta');
-      header.addEventListener('click', () => details.classList.toggle('hidden'));
+      el.addEventListener('click', (event) => {
+        if (event.target.closest('button, a')) return;
+        details.classList.toggle('hidden');
+      });
       hr_section_list.appendChild(el);
       return;
     }
