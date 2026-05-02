@@ -598,6 +598,7 @@ select option {
 .sectionTab.active { background: linear-gradient(135deg, #4f7cff, #6a8cff); color: white; border-color: #4f7cff; }
 .sectionToolbar { display:flex; justify-content: space-between; align-items:center; gap:10px; margin-bottom: 10px; }
 .modalBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index: 2000; }
+.modalBackdrop.hidden { display: none; }
 .modalCard { width: min(760px, 92vw); max-height: 88vh; overflow:auto; background:#0f1419; border:1px solid #2a3a4a; border-radius: 14px; padding: 18px; }
 .modalActions { display:flex; justify-content:flex-end; gap: 10px; margin-top: 14px; }
 
@@ -1284,6 +1285,15 @@ function openModal(title, fields, values, onSubmit) {
   modal_backdrop.classList.remove('hidden');
 }
 function closeModal() { modal_backdrop.classList.add('hidden'); modalState = null; }
+
+modal_backdrop.addEventListener('click', (event) => {
+  if (event.target === modal_backdrop) closeModal();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !modal_backdrop.classList.contains('hidden')) closeModal();
+});
+
 async function submitModal() {
   if (!modalState) return;
   const payload = {};
