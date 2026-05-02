@@ -690,10 +690,9 @@ select option {
     <div class="sectionHeader"><i data-lucide="users"></i>HR</div>
     <div class="recordGrid">
       <div class="field"><label>Personnel Name</label><input id="hr_name" placeholder="Jane Doe"></div>
-      <div class="field"><label>Performance Reviews</label><textarea id="hr_reviews" placeholder="Attach review notes, links, or file references..."></textarea></div>
-      <div class="field"><label>Disciplinary Actions</label><textarea id="hr_disciplinary" placeholder="Attach action notes..."></textarea></div>
-      <div class="field"><label>Training Logs</label><textarea id="hr_training" placeholder="Attach completed trainings..."></textarea></div>
-      <div class="field"><label>Cases Worked</label><textarea id="hr_cases_worked" placeholder="Attach case list..."></textarea></div>
+      <div class="field"><label>Role</label><input id="hr_reviews" placeholder="Paralegal"></div>
+      <div class="field"><label>Phone</label><input id="hr_disciplinary" placeholder="555-0123"></div>
+      <div class="field"><label>Notes</label><textarea id="hr_training" placeholder="Personnel notes..."></textarea></div>
     </div>
     <div class="buttonGroup"><button onclick="saveHrRecord()"><i data-lucide="save"></i>Save Personnel File</button></div>
     <div id="hr_list" class="recordList"></div>
@@ -741,7 +740,24 @@ select option {
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA9FVAtjVAQZbahFRRA4gaCZD0XYLp46s8",
+  authDomain: "blaisescott.firebaseapp.com",
+  projectId: "blaisescott",
+  storageBucket: "blaisescott.firebasestorage.app",
+  messagingSenderId: "268553677622",
+  appId: "1:268553677622:web:80e9c3b010cc0e3ebd6197",
+  measurementId: "G-VP0HHZ32G4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let hrPersonnel = [];
 let currentTemplate = 'outreach';
 let exhibitCount = 0;
 
@@ -1144,7 +1160,7 @@ function renderRecordList(key, listId, formatter) {
   });
 }
 const formatters = {
-  hr: { name: 'hr', title: r => r.name || 'Unnamed Personnel File', body: r => `Performance Reviews: ${r.reviews || '-'}\nDisciplinary Actions: ${r.disciplinary || '-'}\nTraining Logs: ${r.training || '-'}\nCases Worked: ${r.casesWorked || '-'}` },
+  hr: { name: 'hr', title: r => r.name || 'Unnamed Personnel File', body: r => `Role: ${r.role || '-'}\nPhone: ${r.phone || '-'}\nNotes: ${r.notes || '-'}` },
   client: { name: 'client', title: r => r.name || 'Unnamed Client', body: r => `Phone: ${r.phone || '-'}\nActive Cases: ${r.activeCases || '-'}\nNotes: ${r.notes || '-'}` },
   case: { name: 'case', title: r => r.caseNumber || 'Unnamed Case', body: r => `Client: ${r.client || '-'}\nCharges: ${r.charges || '-'}\nStatus: ${r.status || '-'}\nOutcome: ${r.outcome || '-'}\nNotes: ${r.notes || '-'}` }
 };
@@ -1152,11 +1168,59 @@ function deleteRecord(key, i, listId, formatterName) {
   const rows = getRecords(key); rows.splice(i, 1); setRecords(key, rows);
   renderRecordList(key, listId, formatters[formatterName]);
 }
-function saveHrRecord() {
-  const rows = getRecords('hrRecords');
-  rows.push({ name: hr_name.value.trim(), reviews: hr_reviews.value.trim(), disciplinary: hr_disciplinary.value.trim(), training: hr_training.value.trim(), casesWorked: hr_cases_worked.value.trim() });
-  setRecords('hrRecords', rows);
-  renderRecordList('hrRecords', 'hr_list', formatters.hr);
+function renderHrList() {
+  const list = document.getElementById('hr_list');
+  list.innerHTML = '';
+  hrPersonnel.forEach((row) => {
+    const el = document.createElement('div');
+    el.className = 'recordItem';
+    el.innerHTML = `<div class="recordHeader"><span>${formatters.hr.title(row)}</span><div><button class="small" onclick="editHrRecord('${row.id}')">Edit</button> <button class="small" onclick="deleteHrRecord('${row.id}')">Delete</button></div></div><div class="recordMeta">${formatters.hr.body(row)}</div>`;
+    list.appendChild(el);
+  });
+}
+
+async function saveHrRecord() {
+  const name = hr_name.value.trim();
+  const role = hr_reviews.value.trim();
+  const phone = hr_disciplinary.value.trim();
+  const notes = hr_training.value.trim();
+  await addDoc(collection(db, 'personnel'), {
+    name,
+    role,
+    phone,
+    notes,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  });
+  hr_name.value = '';
+  hr_reviews.value = '';
+  hr_disciplinary.value = '';
+  hr_training.value = '';
+}
+
+async function editHrRecord(id) {
+  const current = hrPersonnel.find(p => p.id === id);
+  if (!current) return;
+  const name = prompt('Name', current.name || '');
+  if (name === null) return;
+  const role = prompt('Role', current.role || '');
+  if (role === null) return;
+  const phone = prompt('Phone', current.phone || '');
+  if (phone === null) return;
+  const notes = prompt('Notes', current.notes || '');
+  if (notes === null) return;
+  await updateDoc(doc(db, 'personnel', id), { name: name.trim(), role: role.trim(), phone: phone.trim(), notes: notes.trim(), updatedAt: serverTimestamp() });
+}
+
+async function deleteHrRecord(id) {
+  await deleteDoc(doc(db, 'personnel', id));
+}
+
+function subscribePersonnel() {
+  onSnapshot(collection(db, 'personnel'), (snapshot) => {
+    hrPersonnel = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderHrList();
+  });
 }
 function saveClientRecord() {
   const rows = getRecords('clientRecords');
@@ -1205,11 +1269,31 @@ loadSettings();
 addExhibit();
 setTemplate('outreach');
 loadDrafts();
-renderRecordList('hrRecords', 'hr_list', formatters.hr);
+subscribePersonnel();
 renderRecordList('clientRecords', 'client_list', formatters.client);
 renderRecordList('caseRecords', 'case_list', formatters.case);
 if (window.lucide) lucide.createIcons();
 generate();
+
+window.saveHrRecord = saveHrRecord;
+window.editHrRecord = editHrRecord;
+window.deleteHrRecord = deleteHrRecord;
+Object.assign(window, {
+  switchPage,
+  switchTab,
+  setTemplate,
+  addExhibit,
+  clearForm,
+  saveDraft,
+  copyOutput,
+  saveSettings,
+  saveClientRecord,
+  saveCaseRecord,
+  loadDraft,
+  deleteDraft,
+  deleteRecord,
+  generate
+});
 </script>
 </body>
 </html>
