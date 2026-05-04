@@ -578,11 +578,11 @@ button.small.danger:hover {
   background: rgba(186, 103, 112, 0.28);
   box-shadow: 0 6px 16px rgba(201, 107, 114, 0.2);
 }
-#copyButton, #copyButtonHeader {
+#copyButton, #copyButtonHeader, #submitPostButton {
   background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 88%, var(--accent-bright)));
   box-shadow: 0 0 20px var(--accent-glow);
 }
-#copyButton:hover, #copyButtonHeader:hover {
+#copyButton:hover, #copyButtonHeader:hover, #submitPostButton:hover {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 .buttonGroup {
@@ -593,6 +593,9 @@ button.small.danger:hover {
   animation: slideUp 0.5s ease-out 0.2s both;
 }
 .date-input {
+  cursor: pointer;
+}
+#courtIncidentDateTime {
   cursor: pointer;
 }
 .datePicker {
@@ -1359,7 +1362,7 @@ select option {
   transition: max-height 0.3s ease, opacity 0.22s ease, padding 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
 .caseWidget.expanded .caseWidgetDetails {
-  max-height: 520px;
+  max-height: 980px;
   opacity: 1;
   padding: 18px;
   border-top-color: var(--border-color);
@@ -1383,6 +1386,55 @@ select option {
   color: var(--text-secondary);
   white-space: pre-wrap;
 }
+.caseLogList {
+  display: grid;
+  gap: 14px;
+}
+.caseLogEntry {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border-color);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.caseLogEntry:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.caseLogMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.caseLogMetaText {
+  min-width: 0;
+}
+.caseLogMeta .small {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+}
+.caseLogAction {
+  margin-top: 2px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.caseLogDescription {
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--text-secondary) 82%, transparent);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
 .caseWidgetActions {
   display: flex;
   justify-content: flex-end;
@@ -1390,6 +1442,141 @@ select option {
   gap: 8px;
   padding-top: 12px;
   border-top: 1px solid var(--border-color);
+}
+.caseWorkspaceHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.caseWorkspaceTitle {
+  display: grid;
+  gap: 6px;
+}
+.caseWorkspaceTitle h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+.caseWorkspaceMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.caseWorkspacePanel {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-muted);
+  padding: 14px;
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+}
+.quickLogActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.caseTimeline {
+  display: grid;
+  gap: 0;
+}
+.caseTimeline .caseLogEntry {
+  padding: 16px 12px;
+  border-radius: 8px;
+}
+.caseTimeline .caseLogEntry.important {
+  border-left: 3px solid var(--accent-color);
+  padding-left: 12px;
+  background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+.caseTimeline .caseLogEntry:hover {
+  background: color-mix(in srgb, var(--bg-card) 74%, var(--accent-color));
+  border-color: var(--accent-border);
+  box-shadow: 0 8px 20px rgba(7, 11, 20, 0.22);
+}
+.caseLogBadge {
+  display: inline-flex;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-border);
+  font-size: 0.7rem;
+}
+.workspaceDocumentList,
+.workspaceCalendarList {
+  display: grid;
+  gap: 10px;
+}
+.caseWorkspacePanel.documentsPanel {
+  min-height: 280px;
+  padding: 20px;
+}
+.workspaceDocumentList {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  justify-content: center;
+  align-items: start;
+  gap: 20px;
+  min-height: 220px;
+}
+.documentCard {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft), var(--shadow-inner);
+}
+.documentCard:hover {
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--bg-card) 86%, var(--accent-color));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(7, 11, 20, 0.45), 0 0 0 1px color-mix(in srgb, var(--accent-color) 24%, transparent);
+}
+.documentCardTitle {
+  font-weight: 800;
+  line-height: 1.25;
+}
+.documentViewerBody {
+  display: grid;
+  gap: 18px;
+}
+.documentViewerModal {
+  width: min(800px, 94vw);
+  padding: 24px;
+}
+.documentViewerBody .caseLogDescription {
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+.documentViewerBody .caseMetaValue,
+.documentViewerBody .caseLogAction {
+  line-height: 1.55;
+}
+.workspaceListItem {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-color);
+}
+.workspaceListItem:first-child {
+  border-top: 0;
+}
+.workspaceNotesArea {
+  min-height: 220px;
 }
 .ongoingCaseRow {
   padding: 0;
@@ -1610,6 +1797,21 @@ select option {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.courtChargeItem {
+  align-items: stretch;
+  flex-direction: column;
+}
+.courtChargeItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.courtChargeModifiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
 .personnelLayout { display:grid; grid-template-columns: 320px 1fr; gap: 16px; }
 .personnelListPanel, .personnelDetailPanel { border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-muted); padding: 14px; }
 .personnelCard { border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; cursor: pointer; margin-bottom: 8px; }
@@ -1659,6 +1861,8 @@ h3 {
     <div class="pageTab" onclick="switchPage('hr')"><i data-lucide="users"></i>HR</div>
     <div class="pageTab" onclick="switchPage('clients')"><i data-lucide="briefcase"></i>Clients</div>
     <div class="pageTab" onclick="switchPage('cases')"><i data-lucide="folder-open"></i>Cases</div>
+    <div class="pageTab" onclick="switchPage('calendar')"><i data-lucide="calendar-days"></i>Calendar</div>
+    <div class="pageTab" onclick="switchPage('profile')"><i data-lucide="user-cog"></i>Profile</div>
   </nav>
 </div>
 
@@ -1705,6 +1909,7 @@ h3 {
       <button id="btn_notice" onclick="setTemplate('notice')"><i data-lucide="alert-circle"></i>Notice of Counsel</button>
       <button id="btn_suppress" onclick="setTemplate('suppress')"><i data-lucide="ban"></i>Motion to Suppress</button>
       <button id="btn_compel" onclick="setTemplate('compel')"><i data-lucide="send"></i>Motion to Compel Discovery</button>
+      <button id="btn_courtSubmission" onclick="setTemplate('courtSubmission')"><i data-lucide="scale"></i>Court Case Submission</button>
     </div>
 
     <div>
@@ -1741,10 +1946,23 @@ h3 {
         <textarea id="compelReasoning" placeholder="Discovery has not been provided in a timely manner. This motion is submitted to avoid infringing upon the defendant's right to a speedy trial and to ensure the efficient progression of the case."></textarea></div>
       </div>
 
+      <div id="courtSubmissionFields" class="hidden">
+        <div class="field"><label>Client</label><select id="courtClientId"><option value="">Select client</option></select></div>
+        <div class="field"><label>Defendant Name</label><input id="courtDefendantName" readonly placeholder="Auto-filled from client"></div>
+        <div class="field"><label>Defendant Phone</label><input id="courtDefendantPhone" readonly placeholder="Auto-filled from client"></div>
+        <div class="field"><label>Defendant Discord</label><input id="courtDefendantDiscord" readonly placeholder="Auto-filled from client"></div>
+        <div class="field"><label>Defendant Timezone</label><input id="courtDefendantTimezone" readonly placeholder="Auto-filled from client"></div>
+        <div class="field"><label>Charging Department</label><input id="courtChargingDepartment" placeholder="Charging department"></div>
+        <div class="field"><label>Date & Time of Incident</label><input id="courtIncidentDateTime" type="datetime-local"></div>
+        <div class="field full"><label>Charges</label><div class="chargeSelector"><input id="courtChargeSearch" class="chargeSearch" placeholder="Search by code or charge name..."><div id="courtChargeOptions" class="chargeList"></div><div id="courtSelectedCharges" class="selectedChargeList"></div></div></div>
+        <div class="field full"><label>Narrative</label><textarea id="courtNarrative" placeholder="Narrative...">My client believes they were wrongly charged.</textarea></div>
+      </div>
+
       <div class="buttonGroup">
         <button onclick="clearForm()" class="small"><i data-lucide="trash-2"></i>Clear</button>
         <button onclick="saveDraft()" class="small"><i data-lucide="save"></i>Save Draft</button>
         <button id="copyButton" onclick="copyOutput()"><i data-lucide="copy"></i>Copy BBCode</button>
+        <button id="submitPostButton" onclick="submitPost()"><i data-lucide="external-link"></i>Submit Post</button>
       </div>
       </div>
 
@@ -1872,6 +2090,40 @@ h3 {
   </div>
 </div>
 
+<div id="page_calendar" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div class="casePageHeader">
+      <div class="sectionHeader"><i data-lucide="calendar-days"></i>Calendar</div>
+    </div>
+    <div id="global_calendar_list" class="caseWorkspacePanel workspaceCalendarList">
+      <div class="recordMeta">Loading scheduled court dates...</div>
+    </div>
+  </div>
+</div>
+
+<div id="page_profile" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div class="casePageHeader">
+      <div class="sectionHeader"><i data-lucide="user-cog"></i>Profile Settings</div>
+    </div>
+    <div class="clientModalGrid">
+      <div class="field"><label>Name</label><select id="profile_name"></select></div>
+      <div class="field"><label>Title</label><input id="profile_title" placeholder="Interim Executive Partner" readonly></div>
+      <div class="field"><label>Phone</label><input id="profile_phone" placeholder="590-2182" readonly></div>
+      <div class="field full"><label>Signature Image URL</label><input id="profile_sig" placeholder="https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png"></div>
+    </div>
+    <div class="buttonGroup">
+      <button type="button" onclick="saveProfileSettings()"><i data-lucide="check-circle"></i>Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<div id="page_case_workspace" class="pageCard" style="display:none;">
+  <div class="fieldsContainer">
+    <div id="case_workspace"></div>
+  </div>
+</div>
+
 <div id="datePicker" class="datePicker hidden">
   <div class="datePickerHeader">
     <button type="button" id="prevMonth">‹</button>
@@ -1917,6 +2169,9 @@ let showArchivedClients = false;
 let activeClientCaseSection = 'ongoing';
 let clientsUnsubscribe = null;
 let clientCasesUnsubscribe = null;
+let activeCaseWorkspaceId = '';
+let activeCaseWorkspaceTab = 'log';
+let activeCaseLogs = [];
 const CASE_STATUS_OPTIONS = ['Ongoing', 'Won', 'Lost', 'Dismissed', 'Closed'];
 const COMPLETED_CASE_STATUSES = ['Won', 'Lost', 'Dismissed', 'Closed'];
 const CASE_FINAL_STATUS_OPTIONS = ['Won', 'Lost', 'Dismissed', 'Closed'];
@@ -2073,22 +2328,37 @@ function setupCaseToolbar() {
 let modalState = null;
 let currentTemplate = 'outreach';
 let exhibitCount = 0;
+let courtSubmissionCharges = [];
 
 function switchPage(page) {
   document.querySelectorAll('.pageTab').forEach(t => t.classList.remove('active'));
-  const order = ['home', 'templates', 'hr', 'clients', 'cases'];
+  const order = ['home', 'templates', 'hr', 'clients', 'cases', 'calendar', 'profile', 'case_workspace'];
   const pageIndex = order.indexOf(page);
   if (pageIndex < 0) return;
-  document.querySelectorAll('.pageTab')[pageIndex].classList.add('active');
+  const navIndex = page === 'case_workspace' ? order.indexOf('cases') : pageIndex;
+  if (navIndex >= 0 && navIndex < 7) document.querySelectorAll('.pageTab')[navIndex].classList.add('active');
   order.forEach(name => {
     const section = document.getElementById('page_' + name);
     section.style.display = name === page ? 'block' : 'none';
   });
+  if (page !== 'case_workspace') {
+    activeCaseWorkspaceId = '';
+    if (window.location.pathname.startsWith('/cases/')) {
+      try {
+        history.pushState({}, '', '/');
+      } catch (error) {
+        window.location.hash = '';
+      }
+    }
+  }
+  if (page === 'calendar') loadGlobalCalendar();
+  if (page === 'profile') loadProfileSettings();
   if (window.lucide) lucide.createIcons();
 }
 
 function goDashboard(target) {
   switchPage(target);
+  if (target === 'cases') history.pushState({}, '', '/');
   if (target === 'templates') switchTab('builder');
 }
 
@@ -2107,7 +2377,7 @@ function setTemplate(name) {
   document.querySelectorAll('.templateList button').forEach(b => b.classList.remove('selected'));
   document.getElementById('btn_' + name).classList.add('selected');
 
-  ['outreachFields','noticeFields','suppressFields','compelFields'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['outreachFields','noticeFields','suppressFields','compelFields','courtSubmissionFields'].forEach(id => document.getElementById(id).classList.add('hidden'));
   document.getElementById(name + 'Fields').classList.remove('hidden');
 
   // Clear and reset exhibits when switching to suppress template
@@ -2118,6 +2388,11 @@ function setTemplate(name) {
   }
 
   fillTemplateDefaults(name);
+  if (name === 'courtSubmission') {
+    renderCourtClientOptions();
+    renderCourtChargeSelector();
+    autofillCourtClient();
+  }
   if (window.lucide) lucide.createIcons();
   generate();
 }
@@ -2389,12 +2664,197 @@ Defendant ${defendant}, by and through counsel of record, respectfully moves to 
 [/list]`;
 }
 
+function formatCourtIncidentDateTime(value = '') {
+  if (!value) return '';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return `${normaliseDate(formatDateInputValue(parsed))} ${String(parsed.getHours()).padStart(2, '0')}:${String(parsed.getMinutes()).padStart(2, '0')}`;
+}
+
+function getSelectedCourtClient() {
+  const clientId = document.getElementById('courtClientId')?.value || '';
+  return clientRows.find((client) => client.id === clientId) || {};
+}
+
+function autofillCourtClient() {
+  const client = getSelectedCourtClient();
+  const nameInput = document.getElementById('courtDefendantName');
+  const phoneInput = document.getElementById('courtDefendantPhone');
+  const discordInput = document.getElementById('courtDefendantDiscord');
+  const timezoneInput = document.getElementById('courtDefendantTimezone');
+  if (nameInput) nameInput.value = client.name || '';
+  if (phoneInput) phoneInput.value = client.phone || '';
+  if (discordInput) discordInput.value = client.discord || 'N/A';
+  if (timezoneInput) timezoneInput.value = client.timezone || 'N/A';
+  generate();
+}
+
+function renderCourtClientOptions() {
+  const select = document.getElementById('courtClientId');
+  if (!select) return;
+  const selectedValue = select.value;
+  setSelectOptions(select, [
+    { value: '', label: 'Select client' },
+    ...clientRows.map((client) => ({ value: client.id, label: client.name || 'Unnamed Client' }))
+  ], selectedValue);
+}
+
+function renderCourtChargeSelector() {
+  const search = document.getElementById('courtChargeSearch');
+  const optionsContainer = document.getElementById('courtChargeOptions');
+  const selectedContainer = document.getElementById('courtSelectedCharges');
+  if (!search || !optionsContainer || !selectedContainer) return;
+
+  const hasChargeDatabase = chargesList.length > 0;
+  const courtModifiers = [
+    { id: 'attempt', label: 'Attempted' },
+    { id: 'accessory', label: 'Accessory' },
+    { id: 'govEmployee', label: 'Government Employee' },
+    { id: 'aggravated', label: 'Aggravated' }
+  ];
+  search.classList.toggle('hidden', !hasChargeDatabase);
+  optionsContainer.classList.toggle('hidden', !hasChargeDatabase);
+
+  if (!hasChargeDatabase) {
+    optionsContainer.innerHTML = '';
+    selectedContainer.innerHTML = '<div class="recordMeta">Charge database unavailable. Charges cannot be selected right now.</div>';
+    return;
+  }
+
+  const selectedCodes = new Set(courtSubmissionCharges.map((charge) => charge.code));
+  selectedContainer.innerHTML = courtSubmissionCharges.length ? courtSubmissionCharges.map((charge) => `
+    <div class="selectedChargeItem courtChargeItem">
+      <div class="courtChargeItemHeader">
+        <span class="selectedChargeText">${escapeHtml(formatChargeSelection(charge))}</span>
+        <button type="button" class="small danger" data-court-charge-remove="${escapeHtml(charge.code)}"><i data-lucide="trash-2"></i>Remove</button>
+      </div>
+      <div class="courtChargeModifiers">
+        <button type="button" class="chargeModifier ${charge.modifiers?.length ? '' : 'active'}" data-court-charge-none="${escapeHtml(charge.code)}">None</button>
+        ${courtModifiers.map((modifier) => `<button type="button" class="chargeModifier ${charge.modifiers?.includes(modifier.id) ? 'active' : ''}" data-court-charge-modifier="${escapeHtml(charge.code)}" data-court-modifier-id="${escapeHtml(modifier.id)}">${escapeHtml(modifier.label)}</button>`).join('')}
+      </div>
+    </div>
+  `).join('') : '<div class="recordMeta">No charges selected.</div>';
+
+  const q = search.value.trim().toLowerCase();
+  const grouped = {};
+  chargesList.filter((charge) => `${charge.code} ${charge.name}`.toLowerCase().includes(q)).forEach((charge) => {
+    const category = getChargeCategory(charge.code);
+    if (!grouped[category]) grouped[category] = [];
+    grouped[category].push(charge);
+  });
+
+  optionsContainer.innerHTML = Object.entries(grouped).map(([category, items]) => `
+    <div class="chargeGroup">
+      <div class="chargeGroupHeader">${escapeHtml(category)}</div>
+      ${items.map((charge) => `
+        <button type="button" class="chargeOption ${selectedCodes.has(charge.code) ? 'active' : ''}" data-court-charge-code="${escapeHtml(charge.code)}">
+          <span class="chargeCode">${escapeHtml(charge.code)}</span>
+          <span class="chargeName">${escapeHtml(charge.name)}</span>
+          <i data-lucide="check" class="chargeCheck"></i>
+        </button>
+      `).join('')}
+    </div>
+  `).join('') || '<div class="recordMeta">No charges found.</div>';
+
+  selectedContainer.querySelectorAll('[data-court-charge-remove]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const code = btn.getAttribute('data-court-charge-remove');
+      courtSubmissionCharges = courtSubmissionCharges.filter((charge) => charge.code !== code);
+      renderCourtChargeSelector();
+      generate();
+    });
+  });
+  selectedContainer.querySelectorAll('[data-court-charge-none]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const code = btn.getAttribute('data-court-charge-none');
+      const charge = courtSubmissionCharges.find((item) => item.code === code);
+      if (charge) charge.modifiers = [];
+      renderCourtChargeSelector();
+      generate();
+    });
+  });
+  selectedContainer.querySelectorAll('[data-court-charge-modifier]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const code = btn.getAttribute('data-court-charge-modifier');
+      const modifierId = btn.getAttribute('data-court-modifier-id');
+      const charge = courtSubmissionCharges.find((item) => item.code === code);
+      if (charge) {
+        const activeModifiers = new Set(charge.modifiers || []);
+        if (activeModifiers.has(modifierId)) activeModifiers.delete(modifierId);
+        else activeModifiers.add(modifierId);
+        charge.modifiers = [...activeModifiers];
+      }
+      renderCourtChargeSelector();
+      generate();
+    });
+  });
+  optionsContainer.querySelectorAll('[data-court-charge-code]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const code = btn.getAttribute('data-court-charge-code');
+      if (courtSubmissionCharges.some((charge) => charge.code === code)) {
+        courtSubmissionCharges = courtSubmissionCharges.filter((charge) => charge.code !== code);
+      } else {
+        courtSubmissionCharges.push({ code, modifiers: [] });
+      }
+      renderCourtChargeSelector();
+      generate();
+    });
+  });
+  refreshLucideIcons();
+}
+
+function buildCourtCaseSubmission() {
+  const client = getSelectedCourtClient();
+  const clientName = document.getElementById('courtDefendantName').value.trim() || client.name || '[Client Name]';
+  const clientPhone = document.getElementById('courtDefendantPhone').value.trim() || client.phone || '[Client Phone]';
+  const defendantDiscord = document.getElementById('courtDefendantDiscord').value.trim() || client.discord || 'N/A';
+  const defendantTimezone = document.getElementById('courtDefendantTimezone').value.trim() || client.timezone || 'N/A';
+  const chargingDepartment = document.getElementById('courtChargingDepartment').value.trim() || '[Charging Department]';
+  const incidentDateTime = formatCourtIncidentDateTime(document.getElementById('courtIncidentDateTime').value) || '[Date & Time]';
+  const narrative = document.getElementById('courtNarrative').value.trim() || 'My client believes they were wrongly charged.';
+  const charges = chargesList.length ? courtSubmissionCharges.map(formatChargeSelection) : [];
+  const chargesListText = (charges.length ? charges : ['[Charge]']).map((charge) => `[*] ${charge}`).join('\n');
+
+  return `[img]https://i.ibb.co/k232q7WY/p-BNEw7k.png[/img]
+[img]https://i.ibb.co/WWpM9hwx/6h9z9Jh.png[/img]
+[divbox=antiquewhite]
+[b]Defendant Name:[/b] ${clientName}
+[b]Defendant Phone:[/b] ${clientPhone}
+[b][color=#0040FF](([/color] Defendant Discord:[/b] ${defendantDiscord} [color=#0040FF][b]))[/b][/color]
+[b][color=#0040FF](([/color] Defendant Timezone:[/b] ${defendantTimezone} [color=#0040FF][b]))[/b][/color]
+[b]Type of Representation (Pick one):[/b] [i]Private Defense Attorney[/i]
+[/divbox]
+[img]https://i.ibb.co/YFM2k6vb/KUw5BQj.png[/img]
+[divbox=antiquewhite]
+[b]Charging Department:[/b] ${chargingDepartment}
+[/divbox]
+[img]https://i.ibb.co/Mk8zFsqm/QSn-S818.png[/img]
+[divbox=antiquewhite]
+[b]Date & Time of Incident(s):[/b] ${incidentDateTime}
+[b]Charge(s):[/b]
+[list]
+${chargesListText}
+[/list]
+
+[b]Narrative:[/b]
+${narrative}
+
+[hr][/hr]
+
+I, [b]${clientName}[/b], hereby affirm that all information provided above is true and correct to the best of my knowledge, and understand that knowingly providing false information could result in additional charges and/or fines. [b][color=#0000FF](([/color][/b] I affirm that all information submitted has been obtained via In-Character means. [b][color=#0000FF]))[/color][/b]
+[/divbox][sajbfooter][/sajbfooter]`;
+}
+
 function generate() {
   let body = '';
   if (currentTemplate === 'outreach') body = buildOutreach();
   if (currentTemplate === 'notice') body = buildNotice();
   if (currentTemplate === 'suppress') body = buildSuppress();
   if (currentTemplate === 'compel') body = buildCompel();
+  if (currentTemplate === 'courtSubmission') {
+    document.getElementById('output').value = buildCourtCaseSubmission();
+    return;
+  }
   document.getElementById('output').value = baseTemplate(body);
 }
 
@@ -2414,11 +2874,23 @@ function copyOutput(){
   });
 }
 
+async function copyGeneratedBbcode() {
+  const out = document.getElementById('output');
+  out.select();
+  await navigator.clipboard.writeText(out.value);
+}
+
+async function submitPost() {
+  await copyGeneratedBbcode();
+  window.open('https://gov.eclipse-rp.net/posting.php?mode=post&f=2213', '_blank', 'noopener');
+}
+
 function saveSettings(){
   localStorage.setItem('name', document.getElementById('set_name').value || 'Levy Gold');
   localStorage.setItem('title', document.getElementById('set_title').value || 'Interim Executive Partner');
   localStorage.setItem('phone', document.getElementById('set_phone').value || '590-2182');
   localStorage.setItem('sig', document.getElementById('set_sig').value || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png');
+  loadProfileSettings();
   generate();
 }
 
@@ -2428,6 +2900,42 @@ function loadSettings(){
   document.getElementById('set_title').value = s.title;
   document.getElementById('set_phone').value = s.phone;
   document.getElementById('set_sig').value = s.sig;
+  loadProfileSettings();
+}
+function saveProfileSettings(){
+  const selectedPerson = hrPersonnel.find((person) => person.id === document.getElementById('profile_name').value);
+  localStorage.setItem('profilePersonnelId', selectedPerson?.id || '');
+  localStorage.setItem('name', selectedPerson?.name || 'Levy Gold');
+  localStorage.setItem('title', document.getElementById('profile_title').value || 'Interim Executive Partner');
+  localStorage.setItem('phone', document.getElementById('profile_phone').value || '590-2182');
+  localStorage.setItem('sig', document.getElementById('profile_sig').value || 'https://i.ibb.co/xqtjm9GX/Hristo-Tsanev-Signature-transparent.png');
+  loadSettings();
+  generate();
+}
+function syncProfileFromPersonnel() {
+  const select = document.getElementById('profile_name');
+  if (!select) return;
+  const person = hrPersonnel.find((row) => row.id === select.value);
+  document.getElementById('profile_title').value = person?.role || '';
+  document.getElementById('profile_phone').value = person?.phone || '';
+}
+function loadProfileSettings(){
+  const s = getSettings();
+  const select = document.getElementById('profile_name');
+  if (select) {
+    const savedId = localStorage.getItem('profilePersonnelId') || '';
+    const selectedId = hrPersonnel.some((person) => person.id === savedId)
+      ? savedId
+      : hrPersonnel.find((person) => person.name === s.name)?.id || '';
+    setSelectOptions(select, [
+      { value: '', label: 'Select personnel' },
+      ...hrPersonnel.map((person) => ({ value: person.id, label: person.name || 'Unnamed Personnel File' }))
+    ], selectedId);
+    select.onchange = syncProfileFromPersonnel;
+    syncProfileFromPersonnel();
+  }
+  const sig = document.getElementById('profile_sig');
+  if (sig) sig.value = s.sig;
 }
 
 function saveDraft(){
@@ -2516,6 +3024,9 @@ function getSelectedPersonnel() {
 function getTodayInputValue() {
   return formatDateInputValue(new Date());
 }
+function getDateTimeInputValue(date = new Date()) {
+  return `${formatDateInputValue(date)}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
 function toTitleCase(value = '') {
   return String(value).toLowerCase().replace(/\b([a-z])/g, (match) => match.toUpperCase());
 }
@@ -2524,6 +3035,23 @@ function formatDisplayDate(value = '') {
   const date = new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function getLogDateObject(value) {
+  if (!value) return null;
+  if (typeof value?.toDate === 'function') return value.toDate();
+  if (typeof value?.seconds === 'number') return new Date(value.seconds * 1000);
+  const parsed = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+function formatCaseLogDate(value) {
+  const date = getLogDateObject(value);
+  if (!date) return '-';
+  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+}
+function formatCaseLogTime(value) {
+  const date = getLogDateObject(value);
+  if (!date) return '';
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 function selectPersonnel(id) { selectedPersonnelId = id; renderHrList(); renderHrSections(); subscribeHrSection(); }
 function getSectionCollectionRef() { return collection(db, 'personnel', selectedPersonnelId, activeHrSection); }
@@ -2803,6 +3331,7 @@ function openModal(title, fields, values, onSubmit) {
 function closeModal() {
   modal_backdrop.classList.add('hidden');
   modalState = null;
+  document.querySelector('.modalCard')?.classList.remove('documentViewerModal');
   const submitButton = document.getElementById('modal_submit');
   submitButton.innerHTML = '<i data-lucide="save"></i>Save';
   submitButton.className = '';
@@ -2843,7 +3372,9 @@ function openClientModal(id = '') {
       const data = {
         name: (document.getElementById('modal_client_name').value || '').trim(),
         phone: (document.getElementById('modal_client_phone').value || '').trim(),
-        address: (document.getElementById('modal_client_address').value || '').trim(),
+        discord: (document.getElementById('modal_client_discord').value || '').trim(),
+        timezone: (document.getElementById('modal_client_timezone').value || '').trim(),
+        address: (document.getElementById('modal_client_address')?.value || '').trim(),
         retainerStartDate,
         retainerEndDate: calculateRetainerEndDate(retainerStartDate),
         notes: (document.getElementById('modal_client_notes').value || '').trim(),
@@ -2863,8 +3394,9 @@ function openClientModal(id = '') {
     <div class="clientModalGrid">
       <div class="field"><label>Client Name</label><input id="modal_client_name" value="${escapeHtml(current.name || '')}" placeholder="Client Name"></div>
       <div class="field"><label>Phone Number</label><input id="modal_client_phone" value="${escapeHtml(current.phone || '')}" placeholder="555-0100"></div>
-      <div class="field full"><label>Address</label><textarea id="modal_client_address" placeholder="e.g. 9 Didion Dr.">${escapeHtml(current.address || '')}</textarea></div>
-      <div class="field"><label>Retainer Start Date</label><input id="modal_client_retainerStartDate" class="date-input" readonly data-display-format="retainer" data-iso-value="${escapeHtml(initialStartDate)}" value="${escapeHtml(formatRetainerDisplayDate(initialStartDate))}" placeholder="Select date"></div>
+      <div class="field"><label>Discord</label><input id="modal_client_discord" value="${escapeHtml(current.discord || '')}" placeholder="Discord username or ID"></div>
+      <div class="field"><label>Timezone</label><input id="modal_client_timezone" value="${escapeHtml(current.timezone || '')}" placeholder="e.g. GMT, EST"></div>
+      <div class="field full"><label>Retainer Start Date</label><input id="modal_client_retainerStartDate" class="date-input" readonly data-display-format="retainer" data-iso-value="${escapeHtml(initialStartDate)}" value="${escapeHtml(formatRetainerDisplayDate(initialStartDate))}" placeholder="Select date"></div>
       <div class="field"><label>Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></label><input id="modal_client_retainerEndDate" readonly placeholder="Auto-calculated"></div>
       <div class="field"><label>Retainer Status Preview</label><div id="modal_retainer_preview" class="retainerPreview"></div></div>
       <div class="field full"><label>Notes</label><textarea id="modal_client_notes" placeholder="Client notes...">${escapeHtml(current.notes || '')}</textarea></div>
@@ -3328,12 +3860,17 @@ function createCaseWidget(row, options = {}) {
       </div>
       <div class="caseWidgetActions">
         ${status === 'Ongoing' ? `<button type="button" class="small" data-case-close="${escapeHtml(row.id)}"><i data-lucide="check-circle"></i>Close Case</button>` : ''}
+        <button type="button" class="small" data-case-workspace="${escapeHtml(row.id)}"><i data-lucide="clipboard-list"></i>Case Log</button>
         <button type="button" class="small" data-case-edit="${escapeHtml(row.id)}"><i data-lucide="edit-3"></i>Edit</button>
         <button type="button" class="small danger" data-case-delete="${escapeHtml(row.id)}"><i data-lucide="trash-2"></i>Delete</button>
       </div>
     </div>
   `;
   el.addEventListener('click', () => el.classList.toggle('expanded'));
+  el.querySelector('[data-case-workspace]').addEventListener('click', (event) => {
+    event.stopPropagation();
+    navigateToCaseWorkspace(row.id);
+  });
   el.querySelector('[data-case-edit]').addEventListener('click', (event) => {
     event.stopPropagation();
     openCaseModal(row.id, options.preselectedLawyerId || '', status, options.preselectedClientId || '');
@@ -3454,6 +3991,547 @@ function openDeletePerformanceReviewModal(row = {}) {
   submitButton.className = 'small danger';
   modal_backdrop.classList.remove('hidden');
   refreshLucideIcons();
+}
+const CASE_LOG_PRESETS = {
+  notice: {
+    label: 'Notice of Receipt',
+    action: 'Notice of Receipt received',
+    description: 'The court filed a Notice of Receipt for this matter.'
+  },
+  activationDiscovery: {
+    label: 'Notice of Activation & Order for Discovery',
+    action: 'Notice of Activation & Order for Discovery received',
+    description: 'The court issued a Notice of Activation and Order for Discovery for this matter.'
+  },
+  discovery: {
+    label: 'Discovery Received',
+    action: 'Discovery received',
+    description: 'Received discovery materials from the prosecution. Review pending.'
+  },
+  scheduling: {
+    label: 'Scheduling Requested',
+    action: 'Scheduling tool opened',
+    description: 'The judge opened the scheduling tool for this matter.'
+  },
+  court: {
+    label: 'Court Scheduled',
+    action: 'Court date scheduled',
+    description: '',
+    type: 'court_scheduled'
+  },
+  general: {
+    label: 'General Log',
+    action: '',
+    description: ''
+  }
+};
+function getProfileUserName() {
+  return getSettings().name || 'Levy Gold';
+}
+function renderPersonnelActorField(id, label, selectedValue = '') {
+  const profileName = selectedValue || getProfileUserName();
+  if (hrPersonnel.length) {
+    return `<div class="field"><label>${escapeHtml(label)}</label><select id="${escapeHtml(id)}">${hrPersonnel.map((person) => {
+      const name = person.name || 'Unnamed Personnel File';
+      return `<option value="${escapeHtml(name)}" ${name === profileName ? 'selected' : ''}>${escapeHtml(name)}</option>`;
+    }).join('')}</select></div>`;
+  }
+  return `<div class="field"><label>${escapeHtml(label)}</label><input id="${escapeHtml(id)}" value="${escapeHtml(profileName)}" placeholder="${escapeHtml(label)}"></div>`;
+}
+function getActorFieldValue(id) {
+  return (document.getElementById(id)?.value || '').trim() || getProfileUserName();
+}
+function openCaseLogModal(row = {}, preset = {}) {
+  if (!row.id) return;
+  modalState = {
+    fields: [],
+    onSubmit: async () => {
+      const action = (document.getElementById('modal_case_log_action').value || '').trim();
+      const description = (document.getElementById('modal_case_log_description').value || '').trim();
+      const dateValue = document.getElementById('modal_case_log_date').value;
+      const courtDateTimeValue = document.getElementById('modal_case_log_courtDateTime')?.value || '';
+      const loggedBy = getActorFieldValue('modal_case_log_loggedBy');
+      if (!action) {
+        alert('Please enter an action.');
+        return false;
+      }
+      if (!dateValue) {
+        alert('Please choose a date and time.');
+        return false;
+      }
+      if (preset.type === 'court_scheduled' && !courtDateTimeValue) {
+        alert('Please choose the scheduled court date and time.');
+        return false;
+      }
+      const courtDescription = preset.type === 'court_scheduled'
+        ? `Court scheduled for ${formatCourtIncidentDateTime(courtDateTimeValue)}.`
+        : description;
+      await addDoc(collection(db, 'cases', row.id, 'logs'), {
+        action,
+        description: courtDescription,
+        type: preset.type || 'general',
+        date: new Date(dateValue),
+        courtDateTime: courtDateTimeValue ? new Date(courtDateTimeValue) : null,
+        loggedBy,
+        createdAt: serverTimestamp()
+      });
+      loadCaseLogs(row.id);
+      if (activeCaseWorkspaceId === row.id) loadWorkspaceLogs();
+    }
+  };
+  modal_title.textContent = 'Add Case Log';
+  modal_fields.innerHTML = `
+    <div class="clientModalGrid">
+      <div class="field full"><label>Action</label><input id="modal_case_log_action" value="${escapeHtml(preset.action || '')}" placeholder="Motion to Suppress filed" required></div>
+      <div class="field full"><label>Description</label><textarea id="modal_case_log_description" placeholder="Optional details...">${escapeHtml(preset.description || '')}</textarea></div>
+      <div class="field"><label>Date</label><input id="modal_case_log_date" type="datetime-local" value="${escapeHtml(getDateTimeInputValue())}"></div>
+      ${preset.type === 'court_scheduled' ? `<div class="field"><label>Court Date & Time</label><input id="modal_case_log_courtDateTime" type="datetime-local" required></div>` : ''}
+      ${renderPersonnelActorField('modal_case_log_loggedBy', 'Logged By')}
+    </div>
+  `;
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="plus"></i>Add Log';
+  submitButton.className = '';
+  submitButton.disabled = false;
+  modal_backdrop.classList.remove('hidden');
+  const dateInput = document.getElementById('modal_case_log_date');
+  const openPicker = () => {
+    try {
+      if (typeof dateInput.showPicker === 'function') dateInput.showPicker();
+    } catch (error) {
+      // Browser allows this only during direct user activation.
+    }
+  };
+  dateInput.addEventListener('click', openPicker);
+  dateInput.addEventListener('focus', openPicker);
+  const courtDateInput = document.getElementById('modal_case_log_courtDateTime');
+  if (courtDateInput) {
+    courtDateInput.addEventListener('input', () => {
+      document.getElementById('modal_case_log_description').value = courtDateInput.value
+        ? `Court scheduled for ${formatCourtIncidentDateTime(courtDateInput.value)}.`
+        : '';
+    });
+    const openCourtPicker = () => {
+      try {
+        if (typeof courtDateInput.showPicker === 'function') courtDateInput.showPicker();
+      } catch (error) {
+        // Browser allows this only during direct user activation.
+      }
+    };
+    courtDateInput.addEventListener('click', openCourtPicker);
+    courtDateInput.addEventListener('focus', openCourtPicker);
+  }
+  refreshLucideIcons();
+}
+function getCaseLogContainer(caseId = '') {
+  return [...document.querySelectorAll('[data-case-logs]')].find((el) => el.getAttribute('data-case-logs') === caseId);
+}
+function renderCaseLogs(caseId, logs = []) {
+  const container = getCaseLogContainer(caseId);
+  if (!container) return;
+  if (!logs.length) {
+    container.innerHTML = '<div class="recordMeta">No logs yet.</div>';
+    return;
+  }
+  container.innerHTML = logs.map((log) => `
+    <div class="caseLogEntry">
+      <div class="caseLogMeta">${escapeHtml(formatCaseLogDate(log.date))} &ndash; ${escapeHtml(log.loggedBy || '-')}</div>
+      <div class="caseLogAction">${escapeHtml(log.action || '-')}</div>
+      ${log.description ? `<div class="caseLogDescription">${escapeHtml(log.description)}</div>` : ''}
+    </div>
+  `).join('');
+}
+async function loadCaseLogs(caseId = '') {
+  if (!caseId) return;
+  const container = getCaseLogContainer(caseId);
+  if (!container) return;
+  container.innerHTML = '<div class="recordMeta">Loading logs...</div>';
+  try {
+    const snapshot = await getDocs(collection(db, 'cases', caseId, 'logs'));
+    const logs = snapshot.docs.map((logDoc) => ({ id: logDoc.id, ...logDoc.data() })).sort((a, b) => {
+      const aTime = getLogDateObject(a.date)?.getTime() || a.createdAt?.seconds * 1000 || 0;
+      const bTime = getLogDateObject(b.date)?.getTime() || b.createdAt?.seconds * 1000 || 0;
+      return bTime - aTime;
+    });
+    renderCaseLogs(caseId, logs);
+  } catch (error) {
+    console.error('Failed to load case logs:', error);
+    container.innerHTML = '<div class="recordMeta">Unable to load logs.</div>';
+  }
+}
+function getCaseById(id = '') {
+  return caseRows.find((row) => row.id === id) || {};
+}
+function navigateToCaseWorkspace(caseId = '', push = true) {
+  if (!caseId) return;
+  activeCaseWorkspaceId = caseId;
+  activeCaseWorkspaceTab = 'log';
+  activeCaseLogs = [];
+  if (push) {
+    try {
+      history.pushState({ caseId }, '', `/cases/${caseId}`);
+    } catch (error) {
+      window.location.hash = `cases/${caseId}`;
+    }
+  }
+  switchPage('case_workspace');
+  renderCaseWorkspace();
+  loadCaseWorkspaceData();
+}
+function setCaseWorkspaceTab(tab = 'log') {
+  activeCaseWorkspaceTab = tab;
+  renderCaseWorkspace();
+  if (tab === 'log' || tab === 'calendar') loadWorkspaceLogs();
+  if (tab === 'documents') loadWorkspaceDocuments();
+}
+function renderCaseWorkspace() {
+  const container = document.getElementById('case_workspace');
+  const row = getCaseById(activeCaseWorkspaceId);
+  if (!container) return;
+  if (!row.id) {
+    container.innerHTML = '<div class="recordMeta">Case not found.</div>';
+    return;
+  }
+  const status = getCaseStatus(row);
+  const isCompleted = COMPLETED_CASE_STATUSES.includes(status);
+  const tabs = [
+    ['log', 'Log', 'clipboard-list'],
+    ['documents', 'Documents', 'file-text'],
+    ['notes', 'Notes', 'notebook-pen']
+  ];
+  container.innerHTML = `
+    <div class="caseWorkspaceHeader">
+      <div class="caseWorkspaceTitle">
+        <button type="button" class="small" onclick="returnToCasesList()"><i data-lucide="arrow-left"></i>Back to Cases</button>
+        <h2>#${escapeHtml(row.caseNumber || 'None')}</h2>
+        <div class="caseWorkspaceMeta">
+          <span>${escapeHtml(row.clientName || row.client || 'No client listed')}</span>
+          <span>${escapeHtml(row.assignedLawyerName || getAssignedLawyerName(row.assignedLawyerId) || '-')}</span>
+          <span class="caseStatusBadge ${isCompleted ? 'completed' : ''}">${escapeHtml(status)}</span>
+        </div>
+      </div>
+      <div class="buttonGroup" style="margin-top:0;">
+        ${status === 'Ongoing' ? `<button type="button" class="small" onclick="openCloseCaseModal(getCaseById('${escapeHtml(row.id)}'))"><i data-lucide="check-circle"></i>Close Case</button>` : ''}
+        <button type="button" class="small" onclick="openCaseModal('${escapeHtml(row.id)}')"><i data-lucide="edit-3"></i>Edit Case</button>
+      </div>
+    </div>
+    <div class="sectionTabs">
+      ${tabs.map(([key, label, icon]) => `<button class="sectionTab ${activeCaseWorkspaceTab === key ? 'active' : ''}" onclick="setCaseWorkspaceTab('${key}')"><i data-lucide="${icon}"></i>${label}</button>`).join('')}
+    </div>
+    <div class="caseWorkspacePanel" id="case_workspace_panel"></div>
+  `;
+  renderCaseWorkspacePanel();
+  refreshLucideIcons();
+}
+function renderCaseWorkspacePanel() {
+  document.getElementById('case_workspace_panel')?.classList.remove('documentsPanel');
+  if (activeCaseWorkspaceTab === 'log') renderWorkspaceLogTab();
+  if (activeCaseWorkspaceTab === 'documents') renderWorkspaceDocumentsTab();
+  if (activeCaseWorkspaceTab === 'notes') renderWorkspaceNotesTab();
+}
+function renderWorkspaceLogTab() {
+  const panel = document.getElementById('case_workspace_panel');
+  const row = getCaseById(activeCaseWorkspaceId);
+  panel.innerHTML = `
+    <div class="quickLogActions">
+      ${Object.entries(CASE_LOG_PRESETS).map(([key, preset]) => `<button type="button" class="small" onclick="openPresetCaseLog('${escapeHtml(key)}')"><i data-lucide="list-plus"></i>${escapeHtml(preset.label)}</button>`).join('')}
+    </div>
+    <div class="caseTimeline" id="case_workspace_logs"><div class="recordMeta">Loading logs...</div></div>
+  `;
+  renderWorkspaceLogs();
+  refreshLucideIcons();
+}
+function openPresetCaseLog(key = 'general') {
+  openCaseLogModal(getCaseById(activeCaseWorkspaceId), CASE_LOG_PRESETS[key] || CASE_LOG_PRESETS.general);
+}
+function renderWorkspaceLogs() {
+  const list = document.getElementById('case_workspace_logs');
+  if (!list) return;
+  if (!activeCaseLogs.length) {
+    list.innerHTML = '<div class="recordMeta">No logs yet.</div>';
+    return;
+  }
+  list.innerHTML = activeCaseLogs.map((log) => {
+    const important = log.action === 'Court date scheduled';
+    return `
+      <div class="caseLogEntry ${important ? 'important' : ''}">
+        <div class="caseLogMeta">
+          <span class="caseLogMetaText">${escapeHtml(formatCaseLogDate(log.date))} &ndash; ${escapeHtml(log.loggedBy || '-')}${important ? '<span class="caseLogBadge">Court</span>' : ''}</span>
+          <button type="button" class="small danger" onclick="openDeleteCaseLogModal('${escapeHtml(log.id)}')"><i data-lucide="trash-2"></i>Delete</button>
+        </div>
+        <div class="caseLogAction">${escapeHtml(log.action || '-')}</div>
+        ${log.description ? `<div class="caseLogDescription">${escapeHtml(log.description)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+  refreshLucideIcons();
+}
+async function loadWorkspaceLogs() {
+  if (!activeCaseWorkspaceId) return;
+  try {
+    const snapshot = await getDocs(collection(db, 'cases', activeCaseWorkspaceId, 'logs'));
+    activeCaseLogs = snapshot.docs.map((logDoc) => ({ id: logDoc.id, ...logDoc.data() })).sort((a, b) => {
+      const aTime = getLogDateObject(a.date)?.getTime() || a.createdAt?.seconds * 1000 || 0;
+      const bTime = getLogDateObject(b.date)?.getTime() || b.createdAt?.seconds * 1000 || 0;
+      return bTime - aTime;
+    });
+    if (activeCaseWorkspaceTab === 'log') renderWorkspaceLogs();
+  } catch (error) {
+    console.error('Failed to load workspace logs:', error);
+  }
+}
+function openDeleteCaseLogModal(logId = '') {
+  const current = activeCaseLogs.find((log) => log.id === logId) || {};
+  if (!activeCaseWorkspaceId || !current.id) return;
+  modalState = {
+    fields: [],
+    onSubmit: async () => {
+      await deleteDoc(doc(db, 'cases', activeCaseWorkspaceId, 'logs', current.id));
+      loadWorkspaceLogs();
+      if (document.getElementById('page_calendar')?.style.display === 'block') loadGlobalCalendar();
+    }
+  };
+  modal_title.textContent = 'Delete Log';
+  modal_fields.innerHTML = `<div class="recordMeta">Permanently delete log "${escapeHtml(current.action || 'Untitled Log')}"?</div>`;
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
+  submitButton.className = 'small danger';
+  submitButton.disabled = false;
+  modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
+}
+function renderWorkspaceDocumentsTab() {
+  document.getElementById('case_workspace_panel').innerHTML = `
+    <div class="quickLogActions">
+      <button type="button" class="small" onclick="openCaseDocumentModal()"><i data-lucide="file-plus"></i>Add Document</button>
+    </div>
+    <div class="workspaceDocumentList" id="case_workspace_documents"><div class="recordMeta">Loading documents...</div></div>
+  `;
+  document.getElementById('case_workspace_panel').classList.add('documentsPanel');
+  refreshLucideIcons();
+}
+async function loadWorkspaceDocuments() {
+  if (!activeCaseWorkspaceId) return;
+  const list = document.getElementById('case_workspace_documents');
+  if (!list) return;
+  try {
+    const snapshot = await getDocs(collection(db, 'cases', activeCaseWorkspaceId, 'documents'));
+    const records = snapshot.docs.map((docRow) => ({ id: docRow.id, ...docRow.data() })).sort((a, b) => {
+      const aTime = getLogDateObject(a.date || a.createdAt)?.getTime() || a.createdAt?.seconds * 1000 || 0;
+      const bTime = getLogDateObject(b.date || b.createdAt)?.getTime() || b.createdAt?.seconds * 1000 || 0;
+      return bTime - aTime;
+    });
+    list.innerHTML = records.length ? records.map((item) => `
+      <button type="button" class="documentCard" onclick="openCaseDocumentViewer('${escapeHtml(item.id)}')">
+        <span class="documentCardTitle">${escapeHtml(item.title || item.name || 'Untitled Document')}</span>
+        <span class="caseLogMeta">${escapeHtml(formatCaseLogDate(item.date || item.createdAt))}</span>
+      </button>
+    `).join('') : '<div class="recordMeta">No documents yet.</div>';
+    refreshLucideIcons();
+  } catch (error) {
+    console.error('Failed to load documents:', error);
+    list.innerHTML = '<div class="recordMeta">Unable to load documents.</div>';
+  }
+}
+async function getWorkspaceDocument(documentId = '') {
+  if (!activeCaseWorkspaceId || !documentId) return {};
+  const snapshot = await getDocs(collection(db, 'cases', activeCaseWorkspaceId, 'documents'));
+  return snapshot.docs.map((docRow) => ({ id: docRow.id, ...docRow.data() })).find((item) => item.id === documentId) || {};
+}
+function openDocumentFormFromViewer(documentId = '') {
+  closeModal();
+  openCaseDocumentModal(documentId);
+}
+function openDocumentDeleteFromViewer(documentId = '') {
+  closeModal();
+  openDeleteCaseDocumentModal(documentId);
+}
+async function openCaseDocumentViewer(documentId = '') {
+  const current = await getWorkspaceDocument(documentId);
+  if (!current.id) return;
+  modalState = {
+    fields: [],
+    onSubmit: async () => false
+  };
+  modal_title.textContent = current.title || current.name || 'Document';
+  modal_fields.innerHTML = `
+    <div class="documentViewerBody">
+      <div>
+        <span class="caseMetaLabel">Title</span>
+        <div class="caseLogAction">${escapeHtml(current.title || current.name || 'Untitled Document')}</div>
+      </div>
+      ${current.type ? `<div><span class="caseMetaLabel">Type</span><div class="caseMetaValue">${escapeHtml(current.type)}</div></div>` : ''}
+      <div><span class="caseMetaLabel">Date</span><div class="caseMetaValue">${escapeHtml(formatCaseLogDate(current.date || current.createdAt))}</div></div>
+      <div><span class="caseMetaLabel">Created By</span><div class="caseMetaValue">${escapeHtml(current.createdBy || '-')}</div></div>
+      <div><span class="caseMetaLabel">Description / Body</span><div class="caseLogDescription">${escapeHtml(current.description || '-')}</div></div>
+      <div class="caseWidgetActions">
+        <button type="button" class="small" onclick="openDocumentFormFromViewer('${escapeHtml(current.id)}')"><i data-lucide="edit-3"></i>Edit</button>
+        <button type="button" class="small danger" onclick="openDocumentDeleteFromViewer('${escapeHtml(current.id)}')"><i data-lucide="trash-2"></i>Delete</button>
+      </div>
+    </div>
+  `;
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="x"></i>Close';
+  submitButton.className = 'small';
+  submitButton.disabled = false;
+  modal_backdrop.classList.remove('hidden');
+  document.querySelector('.modalCard')?.classList.add('documentViewerModal');
+  refreshLucideIcons();
+}
+async function openCaseDocumentModal(documentId = '') {
+  if (!activeCaseWorkspaceId) return;
+  const current = documentId ? await getWorkspaceDocument(documentId) : {};
+  modalState = {
+    fields: [],
+    onSubmit: async () => {
+      const payload = {
+        title: (document.getElementById('modal_case_document_title').value || '').trim(),
+        type: (document.getElementById('modal_case_document_type').value || '').trim(),
+        description: (document.getElementById('modal_case_document_description').value || '').trim(),
+        date: new Date(document.getElementById('modal_case_document_date').value),
+        createdBy: getActorFieldValue('modal_case_document_createdBy'),
+        updatedAt: serverTimestamp()
+      };
+      if (!payload.title) {
+        alert('Please enter a document title.');
+        return false;
+      }
+      if (documentId) await updateDoc(doc(db, 'cases', activeCaseWorkspaceId, 'documents', documentId), payload);
+      else await addDoc(collection(db, 'cases', activeCaseWorkspaceId, 'documents'), { ...payload, createdAt: serverTimestamp() });
+      loadWorkspaceDocuments();
+    }
+  };
+  modal_title.textContent = documentId ? 'Edit Document' : 'Add Document';
+  modal_fields.innerHTML = `
+    <div class="clientModalGrid">
+      <div class="field full"><label>Document Title</label><input id="modal_case_document_title" value="${escapeHtml(current.title || current.name || '')}" placeholder="Document title"></div>
+      <div class="field"><label>Document Type</label><input id="modal_case_document_type" value="${escapeHtml(current.type || '')}" placeholder="Motion, Notice, Filing"></div>
+      <div class="field"><label>Date</label><input id="modal_case_document_date" type="datetime-local" value="${escapeHtml(current.date ? getDateTimeInputValue(getLogDateObject(current.date) || new Date()) : getDateTimeInputValue())}"></div>
+      ${renderPersonnelActorField('modal_case_document_createdBy', 'Created By', current.createdBy || '')}
+      <div class="field full"><label>Description / Body</label><textarea id="modal_case_document_description" placeholder="Description or body...">${escapeHtml(current.description || '')}</textarea></div>
+    </div>
+  `;
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="save"></i>Save Document';
+  submitButton.className = '';
+  submitButton.disabled = false;
+  modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
+}
+async function openDeleteCaseDocumentModal(documentId = '') {
+  const current = await getWorkspaceDocument(documentId);
+  if (!current.id) return;
+  modalState = {
+    fields: [],
+    onSubmit: async () => {
+      await deleteDoc(doc(db, 'cases', activeCaseWorkspaceId, 'documents', current.id));
+      loadWorkspaceDocuments();
+    }
+  };
+  modal_title.textContent = 'Delete Document';
+  modal_fields.innerHTML = `<div class="recordMeta">Permanently delete document ${escapeHtml(current.title || current.name || 'Untitled Document')}?</div>`;
+  const submitButton = document.getElementById('modal_submit');
+  submitButton.innerHTML = '<i data-lucide="trash-2"></i>Confirm Delete';
+  submitButton.className = 'small danger';
+  submitButton.disabled = false;
+  modal_backdrop.classList.remove('hidden');
+  refreshLucideIcons();
+}
+function renderWorkspaceNotesTab() {
+  const row = getCaseById(activeCaseWorkspaceId);
+  document.getElementById('case_workspace_panel').innerHTML = `
+    <div class="field">
+      <label>Internal Notes</label>
+      <textarea id="case_workspace_notes" class="workspaceNotesArea" placeholder="Strategy, reminders, internal thinking...">${escapeHtml(row.internalNotes || '')}</textarea>
+    </div>
+    <button type="button" class="small" onclick="saveCaseWorkspaceNotes()"><i data-lucide="save"></i>Save Notes</button>
+  `;
+  refreshLucideIcons();
+}
+async function saveCaseWorkspaceNotes() {
+  if (!activeCaseWorkspaceId) return;
+  await updateDoc(doc(db, 'cases', activeCaseWorkspaceId), {
+    internalNotes: (document.getElementById('case_workspace_notes').value || '').trim(),
+    updatedAt: serverTimestamp()
+  });
+}
+function renderWorkspaceCalendarTab() {
+  const row = getCaseById(activeCaseWorkspaceId);
+  const panel = document.getElementById('case_workspace_panel');
+  const courtLogs = activeCaseLogs.filter(isCourtScheduledLog);
+  panel.innerHTML = `
+    <div class="workspaceCalendarList">
+      ${courtLogs.length ? courtLogs.map((log) => `
+        <div class="workspaceListItem">
+          <div class="caseLogAction">${escapeHtml(formatCaseLogDate(log.courtDateTime || log.date))} &ndash; ${escapeHtml(formatCaseLogTime(log.courtDateTime || log.date))}</div>
+          <div class="caseLogMeta">Case #${escapeHtml(row.caseNumber || 'None')} &ndash; ${escapeHtml(row.clientName || row.client || 'No client listed')}</div>
+        </div>
+      `).join('') : '<div class="recordMeta">No court dates scheduled.</div>'}
+    </div>
+  `;
+}
+async function getCaseLogs(caseId = '') {
+  const snapshot = await getDocs(collection(db, 'cases', caseId, 'logs'));
+  return snapshot.docs.map((logDoc) => ({ id: logDoc.id, ...logDoc.data() }));
+}
+function isCourtScheduledLog(log = {}) {
+  return log.type === 'court_scheduled' || log.action === 'Court date scheduled';
+}
+async function loadGlobalCalendar() {
+  const list = document.getElementById('global_calendar_list');
+  if (!list) return;
+  list.innerHTML = '<div class="recordMeta">Loading scheduled court dates...</div>';
+  try {
+    const eventGroups = await Promise.all(caseRows.map(async (row) => {
+      const logs = await getCaseLogs(row.id);
+      return logs.filter(isCourtScheduledLog).map((log) => ({ ...log, caseRow: row }));
+    }));
+    const events = eventGroups.flat().sort((a, b) => {
+      const aTime = getLogDateObject(a.courtDateTime || a.date)?.getTime() || 0;
+      const bTime = getLogDateObject(b.courtDateTime || b.date)?.getTime() || 0;
+      return aTime - bTime;
+    });
+    list.innerHTML = events.length ? events.map((event) => {
+      const row = event.caseRow;
+      const eventDate = event.courtDateTime || event.date;
+      return `
+        <div class="workspaceListItem">
+          <div class="caseLogAction">${escapeHtml(formatCaseLogDate(eventDate))} &ndash; ${escapeHtml(formatCaseLogTime(eventDate))}</div>
+          <div class="caseLogMeta">Case #${escapeHtml(row.caseNumber || 'None')} &ndash; ${escapeHtml(row.clientName || row.client || 'No client listed')} &ndash; ${escapeHtml(row.assignedLawyerName || getAssignedLawyerName(row.assignedLawyerId) || '-')}</div>
+          <button type="button" class="small" onclick="navigateToCaseWorkspace('${escapeHtml(row.id)}')"><i data-lucide="external-link"></i>Open Case</button>
+        </div>
+      `;
+    }).join('') : '<div class="recordMeta">No scheduled court dates.</div>';
+    refreshLucideIcons();
+  } catch (error) {
+    console.error('Failed to load global calendar:', error);
+    list.innerHTML = '<div class="recordMeta">Unable to load scheduled court dates.</div>';
+  }
+}
+function loadCaseWorkspaceData() {
+  loadWorkspaceLogs();
+  if (activeCaseWorkspaceTab === 'documents') loadWorkspaceDocuments();
+}
+function returnToCasesList() {
+  try {
+    history.pushState({}, '', '/');
+  } catch (error) {
+    window.location.hash = '';
+  }
+  switchPage('cases');
+}
+function handleCaseWorkspaceRoute() {
+  const match = window.location.pathname.match(/^\/cases\/([^/]+)$/);
+  if (match) {
+    navigateToCaseWorkspace(decodeURIComponent(match[1]), false);
+    return;
+  }
+  const hashMatch = window.location.hash.match(/^#cases\/(.+)$/);
+  if (hashMatch) {
+    navigateToCaseWorkspace(decodeURIComponent(hashMatch[1]), false);
+    return;
+  }
+  if (activeCaseWorkspaceId) switchPage('cases');
 }
 async function archiveClient(id) {
   if (!id) return;
@@ -3605,7 +4683,8 @@ function renderClientDetail() {
     </div>
     <div class="clientProfileGrid">
       <div><span class="profileLabel">Phone Number</span><div class="profileValue">${escapeHtml(client.phone || '-')}</div></div>
-      <div class="full"><span class="profileLabel">Address</span><div class="profileValue">${escapeHtml(client.address || '-')}</div></div>
+      <div><span class="profileLabel">Discord</span><div class="profileValue">${escapeHtml(client.discord || '-')}</div></div>
+      <div><span class="profileLabel">Timezone</span><div class="profileValue">${escapeHtml(client.timezone || '-')}</div></div>
       <div><span class="profileLabel">Retainer Status</span><div class="profileValue">${escapeHtml(getRetainerLabel(getClientRetainerEndDate(client)))}</div></div>
       <div><span class="profileLabel">Retainer Start Date</span><div class="profileValue">${escapeHtml(formatRetainerDisplayDate(client.retainerStartDate) || '-')}</div></div>
       <div><span class="profileLabel">Retainer End Date <span class="retainerAutoLabel">Auto-calculated</span></span><div class="profileValue">${escapeHtml(formatRetainerDisplayDate(getClientRetainerEndDate(client)) || '-')}</div></div>
@@ -3660,6 +4739,8 @@ function subscribeClients() {
     const visibleClients = getVisibleClients();
     if (!selectedClientId && visibleClients.length) selectedClientId = visibleClients[0].id;
     if (selectedClientId && !visibleClients.some((client) => client.id === selectedClientId)) selectedClientId = visibleClients[0]?.id || '';
+    renderCourtClientOptions();
+    autofillCourtClient();
     renderCaseFilterOptions();
     renderClientList();
     renderClientDetail();
@@ -3671,6 +4752,11 @@ function subscribeCases() {
   casesUnsubscribe = onSnapshot(collection(db, 'cases'), (snapshot) => {
     caseRows = sortCases(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
     renderCasesPage();
+    if (activeCaseWorkspaceId) {
+      renderCaseWorkspace();
+      loadCaseWorkspaceData();
+    }
+    if (document.getElementById('page_calendar')?.style.display === 'block') loadGlobalCalendar();
     renderClientList();
     renderClientDetail();
   });
@@ -3682,6 +4768,7 @@ function subscribePersonnel() {
     if (!selectedPersonnelId && hrPersonnel.length) selectedPersonnelId = hrPersonnel[0].id;
     renderHrList();
     renderHrSections();
+    loadProfileSettings();
     subscribeHrSection();
   });
 }
@@ -3690,9 +4777,11 @@ async function initializePenalCodes() {
   try {
     await loadPenalCodes();
     renderCasesPage();
+    renderCourtChargeSelector();
   } catch (error) {
     console.error('Failed to load penal codes from Firestore:', error);
     chargesList = [];
+    renderCourtChargeSelector();
   }
 }
 function clearForm(){
@@ -3710,6 +4799,14 @@ function clearForm(){
   document.getElementById('compelDate').value = '';
   document.getElementById('compelDefendant').value = '';
   document.getElementById('compelReasoning').value = '';
+  document.getElementById('courtClientId').value = '';
+  document.getElementById('courtDefendantName').value = '';
+  document.getElementById('courtDefendantPhone').value = '';
+  document.getElementById('courtChargingDepartment').value = '';
+document.getElementById('courtIncidentDateTime').value = '';
+  document.getElementById('courtNarrative').value = 'My client believes they were wrongly charged.';
+  courtSubmissionCharges = [];
+  renderCourtChargeSelector();
   
   // Clear all exhibits
   exhibitCount = 0;
@@ -3722,6 +4819,23 @@ function clearForm(){
 const inputs = document.querySelectorAll('input, textarea, select');
 inputs.forEach(el => el.addEventListener('input', generate));
 inputs.forEach(el => el.addEventListener('change', generate));
+document.getElementById('courtClientId').addEventListener('change', autofillCourtClient);
+document.getElementById('courtChargeSearch').addEventListener('input', () => {
+  renderCourtChargeSelector();
+  generate();
+});
+const courtIncidentDateTimeInput = document.getElementById('courtIncidentDateTime');
+const openCourtIncidentPicker = () => {
+  try {
+    if (typeof courtIncidentDateTimeInput.showPicker === 'function') courtIncidentDateTimeInput.showPicker();
+  } catch (error) {
+    // Some browsers only allow showPicker during direct pointer activation.
+  }
+};
+courtIncidentDateTimeInput.addEventListener('click', openCourtIncidentPicker);
+courtIncidentDateTimeInput.addEventListener('focus', openCourtIncidentPicker);
+window.addEventListener('popstate', handleCaseWorkspaceRoute);
+window.addEventListener('hashchange', handleCaseWorkspaceRoute);
 
 setupDatePicker();
 initializePenalCodes();
@@ -3737,6 +4851,7 @@ subscribeClients();
 subscribeCases();
 if (window.lucide) lucide.createIcons();
 generate();
+handleCaseWorkspaceRoute();
 
 window.deleteHrRecord = deleteHrRecord;
 Object.assign(window, {
@@ -3749,6 +4864,20 @@ Object.assign(window, {
   openDeleteClientModal,
   openHrRecordModal,
   openCaseModal,
+  openCloseCaseModal,
+  navigateToCaseWorkspace,
+  setCaseWorkspaceTab,
+  openPresetCaseLog,
+  openCaseLogModal,
+  openDeleteCaseLogModal,
+  openCaseDocumentModal,
+  openCaseDocumentViewer,
+  openDocumentFormFromViewer,
+  openDocumentDeleteFromViewer,
+  openDeleteCaseDocumentModal,
+  getCaseById,
+  returnToCasesList,
+  saveCaseWorkspaceNotes,
   closeModal,
   submitModal,
   switchPage,
@@ -3758,7 +4887,10 @@ Object.assign(window, {
   clearForm,
   saveDraft,
   copyOutput,
+  submitPost,
   saveSettings,
+  saveProfileSettings,
+  syncProfileFromPersonnel,
   loadDraft,
   deleteDraft,
   deleteRecord,
